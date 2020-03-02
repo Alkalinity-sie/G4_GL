@@ -32,5 +32,13 @@ public class MapService {
 		return m;
 	}
 	
+	public String getMapname(Maps m) {
+		return m.getName();
+	}
+	
+	public String getMapDescription(Maps m) {
+		return m.getDescription();
+	}
+	
 
 }
