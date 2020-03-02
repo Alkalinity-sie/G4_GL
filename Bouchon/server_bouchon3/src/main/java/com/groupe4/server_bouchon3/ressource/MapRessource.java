@@ -39,6 +39,18 @@ public class MapRessource {
 	public Maps getEvent(@PathParam("MapID") int id) {
 		return mapService.getMap(id);
 	}
+	
+	@GET
+	@Path("/{MapID}/Name")
+	public String getMapName(@PathParam("MapID") int id) {
+		return mapService.getMapname(mapService.getMap(id));
+	}
+	
+	@GET
+	@Path("/{MapID}/Description")
+	public String getMapDescription(@PathParam("MapID") int id) {
+		return mapService.getMapDescription(mapService.getMap(id));
+	}
 
 	
 
