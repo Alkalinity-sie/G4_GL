@@ -1,47 +1,38 @@
 package couchedepersistance;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface UserDao {
-    //retrieval of the list of all existing user
-    default List<User> getUsers (){
-        List<User> users = new ArrayList<>();
-        for(int i = 0; i < 10; i++){
-            users.add(new User());
-        }
-        return users;
-    }
-    //retrieval of a user's id from his username.  We assume that a username is uniquejust like an id
-    default int getUserId (String username){
-        int id = 0;
-        for(int i = 0; i < username.length(); i++){
-            id += username.charAt(i);
-        }
-        return id;
-    }
+	
+	/* GET */
+	
     //retrieval of a username
-    default String getUsername (int user_id){
-        return "random username";
-    }
+    String getUsername (int user_id);
     //retrieval of a user's password 
-    default String getPassword (int user_id){
-        return "random password";
-    }
+    String getPassword (int user_id);
     //retrieval of user's list of maps that he created
-    default List<Map> getPersonnelMaps (int user_id){
-        List<Map> personnelMaps = new ArrayList<>();
-        for(int i = 0; i < 10; i++){
-            personnelMaps.add(new Map());
-        }
-        return personnelMaps;
-    }
+    List<Map> getPersonnalMaps (int user_id);
     //retrieval of a user's list of map that other users shared with him
-    default List<Map> getMapsSharedToHim (int user_id){
-        List<Map> sharedToHim = new ArrayList<>();
-        for(int i = 0; i < 6; i++){
-            sharedToHim.add(new Map());
-        }
-        return sharedToHim;
-    }
+    List<Map> getMapsSharedToHim (int user_id);
+    
+    /* POST */
+    
+    //set of a username
+    void setUsername (int user_id, String username);
+    //set of a user's password 
+    void setPassword (int user_id, String password);
+    
+    /* PUT */
+    
+    //add a new personnal map
+    int addPersonnalMap (int user_id);
+    //add a new shared map 
+    void addMapToSharedToHim (int FROM_user_id, int TO_user_id, int map_id);
+    
+    /* DELETE */
+    
+    //remove a personnal map
+    void removePersonnalMap(int user_id, int map_id);
+    //remove a shared map
+    void removeSharedMap(int user_id, int map_id);
 }

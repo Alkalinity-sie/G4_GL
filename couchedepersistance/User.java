@@ -19,6 +19,15 @@ public class User {
         this.sharedToMe = new ArrayList<>();
         this.myMaps = new ArrayList<>();
     }
+    
+    public User (String username, String password){
+        numberOfExistingUser++;
+        this.id = numberOfExistingUser;
+        this.username = username;
+        this.password = password;
+        this.sharedToMe = new ArrayList<>();
+        this.myMaps = new ArrayList<>();
+    }
 
     public int getId() {
         return id;
