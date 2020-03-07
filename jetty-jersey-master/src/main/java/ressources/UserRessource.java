@@ -16,7 +16,7 @@ import couchedepersistance.Map;
 import couchedepersistance.User;
 import couchedepersistance.UserDao;
 
-@Path("/User")
+@Path("/User/{UserID}")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class UserRessource implements UserDao {
@@ -24,7 +24,7 @@ public class UserRessource implements UserDao {
 	/* GET */
 	
 	@GET
-	@Path("/getUsername/{UserID}")
+	@Path("/getUsername")
 	//retrieval of a username
     public String getUsername (@PathParam("UserID") int user_id) {
 		User utilisateur = new User("Jean","123456789");
@@ -32,14 +32,14 @@ public class UserRessource implements UserDao {
     }
 	
 	@GET
-	@Path("/getPassword/{UserID}")
+	@Path("/getPassword")
     //retrieval of a user's password 
     public String getPassword (@PathParam("UserID") int user_id) {
     	return "random_password";
     }
 	
 	@GET
-	@Path("/getPersonnalMaps/{UserID}")
+	@Path("/getPersonnalMaps")
     //retrieval of user's list of maps that he created
     public List<Map> getPersonnalMaps (@PathParam("UserID") int user_id){
 		List<Map> personnelMaps = new ArrayList<>();
@@ -50,9 +50,9 @@ public class UserRessource implements UserDao {
     }
 	
 	@GET
-	@Path("/getMapsSharedToHim/{UserID}")
+	@Path("/getMapsSharedToMe")
     //retrieval of a user's list of map that other users shared with him
-    public List<Map> getMapsSharedToHim (@PathParam("UserID") int user_id){
+    public List<Map> getMapsSharedToMe (@PathParam("UserID") int user_id){
 		List<Map> sharedToHim = new ArrayList<>();
         for(int i = 0; i < 6; i++){
             sharedToHim.add(new Map());
@@ -63,41 +63,41 @@ public class UserRessource implements UserDao {
 	/* POST */
 	
 	@POST
-	@Path("/setUsername/{UserID}/{Username}")
+	@Path("/setUsername/{Username}")
 	//set of a username
     public void setUsername (@PathParam("UserID") int user_id, @PathParam("Username") String username) {}
 	
 	@POST
-	@Path("/setPassword/{UserID}/{Password}")
+	@Path("/setPassword/{Password}")
     //set of a user's password 
 	public void setPassword (@PathParam("UserID") int user_id, @PathParam("Password") String password) {}
 	
 	/* PUT */
 	
 	@PUT
-	@Path("/addPersonnalMap/{UserID}")
+	@Path("/addPersonnalMap")
     //add a new (empty) personnal map
 	public int addPersonnalMap (@PathParam("UserID") int user_id) {
 		return 0;
 	}
 	
 	@PUT
-	@Path("/addMapToSharedToHim/{FROM_UserID}/{TO_UserID}/{SharedMapID}")
+	@Path("/addMapToSharedToMe/{FromUserID}/{SharedMapID}")
     //add a new shared map 
-	public void addMapToSharedToHim (
-			@PathParam("FROM_UserID") int FROM_user_id, 
-			@PathParam("TO_UserID")   int TO_user_id,
+	public void addMapToSharedToMe (
+			@PathParam("FromUserID")  int FROM_user_id, 
+			@PathParam("UserID")      int user_id,
 			@PathParam("SharedMapID") int map_id) {}
 	
 	/* DELETE */
 	
 	@DELETE
-	@Path("/removePersonnalMap/{UserID}/{PersonnalMapID}")
+	@Path("/removePersonnalMap/{PersonnalMapID}")
 	//remove a personnal map
     public void removePersonnalMap(@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) {}
 	
 	@DELETE
-	@Path("/removeSharedMap/{UserID}/{SharedMapID}")
+	@Path("/removeSharedMap/{SharedMapID}")
 	//remove a shared map
     public void removeSharedMap(@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) {}
 	

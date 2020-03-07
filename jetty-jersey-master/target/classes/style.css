@@ -1,0 +1,86 @@
+#User{
+	height: 300px;
+    width: 400px;
+    border: 2px solid black;
+    position: relative;
+
+}
+#User h2{
+	position: relative;
+    left: 160px;
+}
+#name{
+	position: relative;
+    left: 10px;
+
+}
+#Personnal{
+	height: 450px;
+    width: 340px;
+    border: 2px solid black;
+    position: relative;
+    left: 420px;
+    top: -304px;
+}
+#Personnal h2{
+	position: relative;
+	left: 83px;
+}
+#ChooseMaps{
+	position: relative;
+    left: 20px;
+}
+#Personnal input{
+    position: relative;
+    left: 23px;
+}
+#AddMap{
+    position: relative;
+    left: 26px;
+}
+#log{
+    position: relative;
+    left: 19px;
+}
+#PersonnalMaps{
+	position: relative;
+	left: 87px;
+}
+#Shared{
+	width: 317px;
+	border: 2px solid black;
+	position: relative;
+	top: -757px;
+	width: 317px;
+	left: 780px;
+}
+#Shared h2{
+	position: relative;
+	left: 90px;
+}
+#MapSharedToHim{
+	position: relative;
+	left: 80px;
+}
+
+#Shared input{
+	position: relative;
+	left: 16px;
+}
+
+#ChooseSharedMaps{
+	position: relative;
+	left: 12px;
+
+}
+#AddSharedMap{
+	position: relative;
+	left: 16px;
+}
+
+.Maps{
+	height: 200px;
+	width: 1300px;
+	border : 1px;
+	
+}
