@@ -6,6 +6,8 @@ public interface UserDao {
 	
 	/* GET */
 	
+	//get a user
+	User getUser (int user_id);
     //retrieval of a username
     String getUsername (int user_id);
     //retrieval of a user's password 

@@ -1,7 +1,7 @@
 package ressources;
 
 import couchedepersistance.EventDao;
-
+import couchedepersistance.Event;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,16 @@ import javax.ws.rs.core.MediaType;
 public class EventRessource implements EventDao {
 	
 		/* GET */
+	
+		@GET
+		@Path("/getEvent")
+		//get an event
+		public Event getEvent (
+				@PathParam("UserID")  int user_id, 
+	    		@PathParam("MapID")   int map_id, 
+	    		@PathParam("EventID") int event_id) {
+			return new Event();
+		}
 	
 		@GET
 		@Path("/getBeginning")

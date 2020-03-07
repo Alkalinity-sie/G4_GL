@@ -24,6 +24,13 @@ public class UserRessource implements UserDao {
 	/* GET */
 	
 	@GET
+	@Path("/getUser")
+	//get a user
+    public User getUser (@PathParam("UserID") int user_id) {
+    	return new User();
+    }
+	
+	@GET
 	@Path("/getUsername")
 	//retrieval of a username
     public String getUsername (@PathParam("UserID") int user_id) {

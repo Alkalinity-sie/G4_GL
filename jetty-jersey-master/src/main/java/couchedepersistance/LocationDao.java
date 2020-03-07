@@ -7,6 +7,8 @@ public interface LocationDao {
 	
 	/* GET */
 	
+	//get a location
+	Location getLocation (int user_id, int map_id, int location_id);
     //retrieval of a location's name
     String getName (int user_id, int map_id, int location_id);
     //retrieval of a location's description

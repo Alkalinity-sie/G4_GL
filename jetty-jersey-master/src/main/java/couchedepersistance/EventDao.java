@@ -9,6 +9,8 @@ public interface EventDao {
 	
 	/* GET */
 	
+	//get an event
+	Event getEvent (int user_id, int map_id, int event_id);
     //retrieval of the date and hour of begginning of an event
     LocalDateTime getBeginning (int user_id, int map_id, int event_id);
     //retrieval of the date and hour of ending of an event

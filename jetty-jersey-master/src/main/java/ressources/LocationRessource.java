@@ -12,6 +12,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import couchedepersistance.Location;
 import couchedepersistance.LocationDao;
 
 
@@ -21,6 +23,16 @@ import couchedepersistance.LocationDao;
 public class LocationRessource implements LocationDao {
 	
 	/* GET */
+	
+	@GET
+	@Path("/getLocation")
+	//get a location
+	public Location getLocation (
+			@PathParam("UserID")  int user_id, 
+    		@PathParam("MapID")   int map_id, 
+    		@PathParam("EventID") int location_id) {
+		return new Location();
+	}
 	
 	@GET
 	@Path("/getName")

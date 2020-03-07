@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import couchedepersistance.Location;
+import couchedepersistance.Map;
 import couchedepersistance.User;
 import couchedepersistance.MapDao;
 
@@ -24,6 +25,13 @@ import couchedepersistance.MapDao;
 public class MapRessource implements MapDao {
 	
 	/* GET */
+	
+	@GET
+	@Path("/getMap")
+	//get a map
+    public Map getMap (@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) {
+    	return new Map();
+    }
 	
 	@GET
 	@Path("/getName")

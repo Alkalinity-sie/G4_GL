@@ -5,6 +5,9 @@ import java.util.List;
 public interface MapDao {
 	
 	/* GET */
+	
+	//get a map
+	Map getMap (int user_id, int map_id);
     //retrieval of a map's name
     String getName (int user_id, int map_id);
     //retrieval of a map's description
