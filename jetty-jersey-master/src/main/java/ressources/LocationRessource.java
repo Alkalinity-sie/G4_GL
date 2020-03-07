@@ -15,36 +15,50 @@ import javax.ws.rs.core.MediaType;
 import couchedepersistance.LocationDao;
 
 
-@Path("/Location")
+@Path("/User/{UserID}/Map/{MapID}/Location/{LocationID}")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class LocationRessource implements LocationDao {
 	
+	/* GET */
+	
 	@GET
-	@Path("/{LocationID}/Name")
+	@Path("/getName")
 	//retrieval of a location's name
-    public String getName (@PathParam("LocationID") int location_id) {
+    public String getName (
+    		@PathParam("UserID")     int user_id, 
+    		@PathParam("MapID")      int map_id, 
+    		@PathParam("LocationID") int location_id) {
     	return "random_location_name";
     }
 	
 	@GET
-	@Path("/{LocationID}/Description")
+	@Path("/getDescription")
     //retrieval of a location's description
-    public String getDescription (@PathParam("LocationID") int location_id) {
+    public String getDescription (
+    		@PathParam("UserID")     int user_id, 
+    		@PathParam("MapID")      int map_id, 
+    		@PathParam("LocationID") int location_id) {
     	return "random_description";
     }
 	
 	@GET
-	@Path("/{LocationID}/Address")
+	@Path("/getAddress")
     //retrieval of a location's address
-    public String getAddress (@PathParam("LocationID") int location_id) {
+    public String getAddress (
+    		@PathParam("UserID")     int user_id, 
+    		@PathParam("MapID")      int map_id, 
+    		@PathParam("LocationID") int location_id) {
     	return "random_address";
     }
 	
 	@GET
-	@Path("/{LocationID}/Labels")
+	@Path("/getLabels")
     //retrieval of a location's list of labels
-    public List<String> getLabels (@PathParam("LocationID") int location_id){
+    public List<String> getLabels (
+    		@PathParam("UserID")     int user_id, 
+    		@PathParam("MapID")      int map_id,
+    		@PathParam("LocationID") int location_id){
 		List<String> labels = new ArrayList<>();
         for(int i = 0; i < 5; i++){
             labels.add("label "+i);
@@ -53,9 +67,12 @@ public class LocationRessource implements LocationDao {
     }
 	
 	@GET
-	@Path("/{LocationID}/Photos")
+	@Path("/getPhotos")
     //retrieval of a location's list of photos
-    public List<ImageIcon> getPhotos (@PathParam("LocationID") int location_id){
+    public List<ImageIcon> getPhotos (
+    		@PathParam("UserID")     int user_id, 
+    		@PathParam("MapID")      int map_id, 
+    		@PathParam("LocationID") int location_id){
 		List<ImageIcon> photos = new ArrayList<>();
         for(int i = 0; i < 10; i++){
             photos.add(new ImageIcon());
@@ -63,29 +80,51 @@ public class LocationRessource implements LocationDao {
         return photos;
     }
 	
+	/* POST */
 	
     @POST
-    @Path("/{LocationID}/{Name}/Name")
+    @Path("/setName/{Name}")
     //set a location's name
-    public void setName (@PathParam("LocationID") int location_id, @PathParam("Name")String name) {}
+    public void setName (
+    		@PathParam("UserID")     int user_id, 
+    		@PathParam("MapID")      int map_id, 
+    		@PathParam("LocationID") int location_id, 
+    		@PathParam("Name")String name) {}
     
     @POST
-    @Path("/{LocationID}/{Description}/Description")
+    @Path("/setDescription/{Description}")
     //set a location's description
-    public void setDescription (@PathParam("LocationID") int location_id, @PathParam("Description") String Description) {}
+    public void setDescription (
+    		@PathParam("UserID")     int user_id, 
+    		@PathParam("MapID")      int map_id, 
+    		@PathParam("LocationID") int location_id, 
+    		@PathParam("Description") String Description) {}
     
     @POST
-    @Path("/{LocationID}/{Address}/Address")
+    @Path("/setAddress/{Address}")
     //set an location's address
-    public void setAddress (@PathParam("LocationID") int location_id, @PathParam("Address") String address) {}
+    public void setAddress (
+    		@PathParam("UserID")     int user_id, 
+    		@PathParam("MapID")      int map_id, 
+    		@PathParam("LocationID") int location_id, 
+    		@PathParam("Address") String address) {}
     
     @POST
-    @Path("/{LocationID}/{Label}/Label")
+    @Path("/addLabel/{Label}")
     //add a label to a location
-    public void addLabel (@PathParam("LocationID") int location_id, @PathParam("Label") String label) {}
+    public void addLabel (
+    		@PathParam("UserID")     int user_id, 
+    		@PathParam("MapID")      int map_id, 
+    		@PathParam("LocationID") int location_id, 
+    		@PathParam("Label") String label) {}
     
     @POST
-    @Path("/{LocationID}/{Photo}/Photo")
+    @Path("addPhoto/{Photo}")
     //add a photo to a location
-    public void addPhoto (@PathParam("LocationID") int location_id, @PathParam("Photo") ImageIcon photo) {}
+    public void addPhoto (
+    		@PathParam("UserID")     int user_id, 
+    		@PathParam("MapID")      int map_id, 
+    		@PathParam("LocationID") int location_id, 
+    		@PathParam("Photo") ImageIcon photo) {}
+    
 }

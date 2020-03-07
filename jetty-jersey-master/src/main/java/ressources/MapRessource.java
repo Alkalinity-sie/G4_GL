@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -16,36 +18,38 @@ import couchedepersistance.Location;
 import couchedepersistance.User;
 import couchedepersistance.MapDao;
 
-@Path("/Map")
+@Path("/User/{UserID}/Map/{MapID}") //PRECISER USER_ID ICI
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class MapRessource implements MapDao {
 	
+	/* GET */
+	
 	@GET
-	@Path("/{MapID}/Name")
+	@Path("/getName")
 	//retrieval of a map's name
-    public String getName (@PathParam("MapID") int map_id) {
+    public String getName (@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) {
 		return "random_map_name";
     }
 	
 	@GET
-	@Path("/{MapID}/Description")
+	@Path("/getDescription")
     //retrieval of a map's description
-    public String getDescription (@PathParam("MapID") int map_id) {
+    public String getDescription (@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) {
 		return "random_map_description";
     }
 	
 	@GET
-	@Path("/{MapID}/Status")
+	@Path("/getStatus")
     //retrieval of a map's status. Return true if it's public
-    public boolean isPublic (@PathParam("MapID") int map_id) {
+    public boolean getStatus (@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) {
     	return true;
     }
 	
 	@GET
-	@Path("/{MapID}/Locations")
+	@Path("/getLocations")
     //retrieval of map's list of locations
-    public List<Location> getLocations (@PathParam("MapID") int map_id){
+    public List<Location> getLocations (@PathParam("UserID") int user_id, @PathParam("MapID") int map_id){
 		List<Location> locations = new ArrayList<>();
         for(int i = 0; i < 10; i++){
             locations.add(new Location());
@@ -54,9 +58,9 @@ public class MapRessource implements MapDao {
     }
 	
 	@GET
-	@Path("/{MapID}/SharedWith")
+	@Path("/getSharedWith")
     //retrieval of the list of users to whom this map has been shared
-    public List<User> getSharedWith (@PathParam("MapID") int map_id){
+    public List<User> getSharedWith (@PathParam("UserID") int user_id, @PathParam("MapID") int map_id){
 		List<User> sharedWith = new ArrayList<>();
         for(int i = 0; i < 10; i++){
             sharedWith.add(new User());
@@ -64,29 +68,55 @@ public class MapRessource implements MapDao {
         return sharedWith;
     }
 	
+	/* POST */
+	
 	@POST
-	@Path("/{MapID}/{Name}/Name")
+	@Path("/setName/{Name}")
 	//set a map's name
-    public void setName (@PathParam("MapID") int map_id, @PathParam("Name") String name) {}
+    public void setName (@PathParam("UserID") int user_id, @PathParam("MapID") int map_id, @PathParam("Name") String name) {}
 	
 	@POST
-	@Path("/{MapID}/{Description}/Description")
+	@Path("/setDescription/{Description}")
     //retrieval of a map's description
-	public void setDescription (@PathParam("MapID") int map_id, @PathParam("Description") String description) {}
+	public void setDescription (@PathParam("UserID") int user_id, @PathParam("MapID") int map_id, @PathParam("Description") String description) {}
 	
 	@POST
-	@Path("/{MapID}/{Status}/Status")
+	@Path("/setStatus/{Status}")
     //retrieval of a map's status. Return true if it's public
-	public void setStatus (@PathParam("MapID") int map_id, @PathParam("Status") boolean status) {} //true = public, false = private
+	public void setStatus (@PathParam("UserID") int user_id, @PathParam("MapID") int map_id, @PathParam("Status") boolean status) {} //true = public, false = private
 	
 	@POST
-	@Path("/{MapID}/{LocationID}/Location")
-    //retrieval of map's list of locations
-	public void addLocation (@PathParam("MapID") int map_id, @PathParam("LocationID") int location_id) {}
-	
-	@POST
-	@Path("/{MapID}/{UserID}/User")
+	@Path("/addUserToSharedWith/{UserIDToAdd}")
     //retrieval of the list of users to whom this map has been shared
-	public void addUserToSharedWith (@PathParam("MapID") int map_id, @PathParam("UserID") int user_id) {}
+	public void addUserToSharedWith (@PathParam("UserID") int user_id, @PathParam("MapID") int map_id, @PathParam("UserIDToAdd") int user_id_to_add) {}
+	
+	/* PUT */
+    
+	@PUT
+	@Path("/addLocation")
+    //add a new empty location to the map and returns his id
+    public int addLocation (@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) {
+		return 0;
+	}
+	
+	@PUT
+	@Path("/addEvent")
+    //add a new empty event to the map and returns the new event's id
+    public int addEvent(@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) {
+		return 0;
+	}
+    
+    
+    /* DELETE */
+    
+	@DELETE
+	@Path("/removeLocation/{LocationID}")
+	//remove a location
+    public void removeLocation(@PathParam("UserID") int user_id, @PathParam("MapID") int map_id, @PathParam("LocationID") int location_id) {}
+	
+	@DELETE
+	@Path("/removeEvent/{EventID}")
+    //remove an event
+    public void removeEvent(@PathParam("UserID") int user_id, @PathParam("MapID") int map_id, @PathParam("EventID") int event_id) {}
 	
 }

@@ -21,9 +21,18 @@ public interface UserDao {
     void setUsername (int user_id, String username);
     //set of a user's password 
     void setPassword (int user_id, String password);
-    //add a new personnal map
-    void addPersonnalMap (int user_id, int map_id);
-    //add a new shared map 
-    void addMapToSharedToHim (int user_id, int map_id);
     
+    /* PUT */
+    
+    //add a new personnal map
+    int addPersonnalMap (int user_id);
+    //add a new shared map 
+    void addMapToSharedToHim (int FROM_user_id, int TO_user_id, int map_id);
+    
+    /* DELETE */
+    
+    //remove a personnal map
+    void removePersonnalMap(int user_id, int map_id);
+    //remove a shared map
+    void removeSharedMap(int user_id, int map_id);
 }
