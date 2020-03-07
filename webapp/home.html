@@ -1,0 +1,41 @@
+ <!DOCTYPE html>
+<html>
+	<body>
+		<script id="templateExample" type="text/template">
+			<div>
+				<%= attribute %>
+			</div>
+		</script>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<h1>GLA : Groupe 4</h1>
+		<div id="User">
+			<h2>User</h2>
+			<div id = "name"></div>
+			<button id = "SetUsername">Set Username</button>
+			<input type="text" name="setName">
+			<button id = "SetPassword">Set Password</button>
+			<button id="MyMaps">My maps</button>
+			<button id ="SharedMaps">Maps Shared with me</button>
+		</div>
+		<div id="Personnal">
+			<h2>Personnal Maps</h2>
+			<button id="ChooseMaps">Select</button>
+			<input type="text" name="MapID">
+			<button id="AddMap">Add</button>
+			<div id ="log"></div>
+			<div id ="PersonnalMaps" class="Maps"></div>
+		</div>
+		<div id ="Shared">
+			<h2>Shared Maps</h2>
+			<button id="ChooseSharedMaps">Select</button>
+			<input type="text" name="SharedMapID">
+			<button id="AddSharedMap">Add</button>
+			<div id ="MapSharedToHim"></div>
+
+		</div>
+		
+		<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+	    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+		<script type="text/javascript" src="user.js"></script>
+	</body>
+</html>
