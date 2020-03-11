@@ -1,155 +1,158 @@
+
+function getServerData(type,url,success){
+	$.ajax({
+		type:type,
+		dataType:'json',
+		url:url
+	}).done(success);
+
+}
+function getServerDataText(type,url,success){
+	$.ajax({
+		type:type,
+		dataType:'text',
+		url:url
+	}).done(success);
+}
+
+function callUsername(username){
+	var templateExample = _.template($('#templateName').html());
+	var html = templateExample({
+		"attribute":JSON.stringify(username)
+	});
+
+	$("#name").append(html);
+}
+
+function callPersonnalMap(Maps){
+	for (var i = 0; i<Maps.length; i++) {
+		var templateExample = _.template($('#templateMap').html());
+		var html = templateExample({
+			"id":JSON.stringify(Maps[i].id),
+			"name":JSON.stringify(Maps[i].name)
+		});
+
+		$("#PersonnalMaps").append(html);
+	}
+}
+
+function callSharedMaps(Maps){
+	for (var i = 0; i<Maps.length; i++) {
+		var templateExample = _.template($('#templateMap').html());
+		var html = templateExample({
+			"id":JSON.stringify(Maps[i].id),
+			"name":JSON.stringify(Maps[i].name)
+		});
+
+		$("#MapSharedToHim").append(html);
+	}
+}
+
+function callChooseMaps(Maps){
+	var templateExample = _.template($('#templateName').html());
+	var html = templateExample({
+		"attribute":JSON.stringify(Maps)
+	});
+
+	$("#MapName").html(html);
+}
+
+function callDescription(Description){
+	var templateExample = _.template($('#templateDescription').html());
+	var html = templateExample({
+		"description":JSON.stringify(Description)
+	});
+
+	$("#Description").html(html);
+}
+
+function callLogPersonnalMap(Map){
+	var templateExample = _.template($('#templateLog').html());
+	var html = templateExample({
+		"Mapid":JSON.stringify($('input[name="MapID"]').val())
+	});
+
+	$("#log").html(html);
+	
+}
+
+function callLogSharedMap(Map){
+	var templateExample = _.template($('#templateLog').html());
+	var html = templateExample({
+		"Mapid":JSON.stringify($('input[name="SharedMapID"]').val())
+	});
+
+	$("#logShared").html(html);
+}
+
+function callSetUsername(username){
+	var name = $('input[name="setName"]').val();
+	$('#name').html('<p>'+name+'</p>');
+}	
+
+function callDeletePersonnalMap(Map){
+	var templateExample = _.template($('#templateDelete').html());
+	var html = templateExample({
+		"Mapid":JSON.stringify($('input[name="MapID"]').val())
+	});
+
+	$("#log").html(html);
+}
+
+function callDeleteSharedMap(Map){
+	var templateExample = _.template($('#templateDelete').html());
+	var html = templateExample({
+		"Mapid":JSON.stringify($('input[name="SharedMapID"]').val())
+	});
+
+	$("#logShared").html(html);
+}
+
 $(function (){
-		$.ajax({
-			type: 'GET',
-			dataType: 'text',
-			url:'/ws/User/1/getUsername'
-		}).done(function(username){
-			var templateExample = _.template($('#templateExample').html());
-			var html = templateExample({
-				"attribute":JSON.stringify(username)
-			});
 
-			$("#name").append(html);
-		});
-
-		$.ajax({
-			type: 'GET',
-			dataType: 'json',
-			url: '/ws/User/1/getPersonnalMaps'
-		}).done(function(Maps){
-			var m= '';
-			for (var i = 0; i<Maps.length; i++) {
-				m += '<p> MapId : '+Maps[i].id+' MapName: '+Maps[i].name+'</p>';
-			}
-			$('#PersonnalMaps').append(m);
-		});
-
-		$.ajax({
-			type: 'GET',
-			dataType: 'json',
-			url: '/ws/User/1/getMapsSharedToMe'
-		}).done(function(Maps){
-			var m= '';
-			for (var i = 0; i<Maps.length; i++) {
-				m += '<p> MapId : '+Maps[i].id+' MapName: '+Maps[i].name+'</p>';
-			}
-			$('#MapSharedToHim').append(m);
-		});
+		getServerDataText('GET','/ws/User/1/getUsername',callUsername);
+		getServerData('GET','/ws/User/1/getPersonnalMaps',callPersonnalMap);		
+		getServerData('GET','/ws/User/1/getMapsSharedToMe',callSharedMaps);
+		
 		$('#ChooseMaps').click(function(){
-			var id = $('input[name="MapID"]').val();
-			console.log(id);
-			$.ajax({
-				type:'GET',
-				dataType: 'text',
-				data: id,
-				url: '/ws/User/1/Map/1/getName'
-			}).done(function(Map){
-				$('#MapName').html('Name: '+Map);
-			});
-
-			$.ajax({
-				type:'GET',
-				dataType: 'text',
-				data: id,
-				url: '/ws/User/1/Map/1/getDescription'
-			}).done(function(Map){
-				$('#Description').html('Description: '+Map);
-			});
+			getServerDataText('GET','/ws/User/1/Map/1/getName',callChooseMaps);			
+			getServerDataText('GET','/ws/User/1/Map/1/getDescription',callDescription);			
 		});
 
 		$('#AddMap').click(function(){
-			$.ajax({
-				type:'PUT',
-				dataType: 'json',
-				url: 'ws/User/1/addPersonnalMap'
-			}).done(function(Map){
-				$('#log').html('<p> Map with id: '+$('input[name="MapID"]').val()+' is added</p>');
-			});
+			getServerData('PUT','ws/User/1/addPersonnalMap',callLogPersonnalMap);
 		});
-
+		
 		$('#SetUsername').click(function(){
-			$.ajax({
-				type: 'POST',
-				dataType: 'json',
-				url:'/ws/User/1/setUsername/Fayas'
-			}).done(function(username){
-					var name = $('input[name="setName"]').val();
-					$('#name').html('<p>'+name+'</p>');
-			});
+			getServerData('POST','/ws/User/1/setUsername/Fayas',callSetUsername);
 		});
 
 		$('#MyMaps').click(function(){
-			$.ajax({
-				type: 'GET',
-				dataType: 'json',
-				url: '/ws/User/1/getPersonnalMaps'
-			}).done(function(Maps){
-				var m= '';
-				for (var i = 0; i<Maps.length; i++) {
-				m += '<p> MapId : '+Maps[i].id+' MapName: '+Maps[i].name+'</p>';
-				}
-				$('#PersonnalMaps').html(m);
-			});
+			$("#PersonnalMaps").empty();
+			getServerData('GET','/ws/User/1/getPersonnalMaps',callPersonnalMap);			
 		});
 
 		$('#SharedMaps').click(function(){
-			$.ajax({
-			type: 'GET',
-			dataType: 'json',
-			url: '/ws/User/1/getMapsSharedToMe'
-		}).done(function(Maps){
-			var m= '';
-			for (var i = 0; i<Maps.length; i++) {
-				m += '<p> MapId : '+Maps[i].id+' MapName: '+Maps[i].name+'</p>';
-			}
-			$('#MapSharedToHim').html(m);
-		});
+			$("#MapSharedToHim").empty();
+			getServerData('GET','/ws/User/1/getMapsSharedToMe',callSharedMaps);			
 		});
 
 		$('#ChooseSharedMaps').click(function(){
-			var id = $('input[name="SharedMapID"]').val();
-			console.log(id);
-			$.ajax({
-				type:'GET',
-				dataType: 'text',
-				data: id,
-				url: '/ws/User/1/Map/1/getName'
-			}).done(function(Map){
-				$('#MapSharedToHim').html('<p> MapId: '+id+' MapName: '+Map.name+'</p>');
-			});
+			getServerDataText('GET','/ws/User/1/Map/1/getName',callChooseMaps);			
+			getServerDataText('GET','/ws/User/1/Map/1/getDescription',callDescription);	
 		});
 
 		$('#AddSharedMap').click(function(){
-			$.ajax({
-				type:'PUT',
-				dataType: 'json',
-				url: 'ws/User/1/addMapToSharedToMe/2/2'
-			}).done(function(Map){
-				$('#logShared').html('<p> Map with id: '+$('input[name="SharedMapID"]').val()+' is added</p>');
-			});
+			getServerData('PUT', 'ws/User/1/addMapToSharedToMe/2/2', callLogSharedMap);			
 		});
 
 		$('#DeleteMap').click(function(){
-			$.ajax({
-				type: 'DELETE',
-				dataType: 'json',
-				url: 'ws/User/1/removePersonnalMap/1'
-			}).done(function(){
-				$('#log').html('<p> Map deleted</p>')
-			});
+			getServerData('DELETE', 'ws/User/1/removePersonnalMap/1', callDeletePersonnalMap);
 		});
 
 		$('#DeleteSharedMap').click(function(){
-			$.ajax({
-				type: 'DELETE',
-				dataType: 'json',
-				url: 'ws/User/1/removeSharedMap/1'
-			}).done(function(){
-				$('#logShared').html('<p> Map deleted</p>')
-			});
+			getServerData('DELETE', 'ws/User/1/removeSharedMap/1', callDeleteSharedMap);			
 		});
-
-
 
 });
 
