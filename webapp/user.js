@@ -4,8 +4,12 @@ $(function (){
 			dataType: 'text',
 			url:'/ws/User/1/getUsername'
 		}).done(function(username){
-				$('#name').append('<p>'+username+'</p>');
-				console.log(username)
+			var templateExample = _.template($('#templateExample').html());
+			var html = templateExample({
+				"attribute":JSON.stringify(username)
+			});
+
+			$("#name").append(html);
 		});
 
 		$.ajax({
