@@ -1,154 +1,180 @@
-﻿$(function (){
+function getServerData(type,url,success){
+	$.ajax({
+		type:type,
+		dataType:'json',
+		url:url
+	}).done(success);
+
+}
+function getServerDataText(type,url,success){
+	$.ajax({
+		type:type,
+		dataType:'text',
+		url:url
+	}).done(success);
+}
+
+
+function callMapname(mapname){
+	var templateExample = _.template($('#templateName').html());
+	var html = templateExample({
+		"attribute":JSON.stringify(mapname)
+	});
+
+	$("#Mapname").append(html);
+}
+
+function callMapDescription(mapdescription){
+	var templateExample = _.template($('#templateDescription').html());
+	var html = templateExample({
+		"description":JSON.stringify(mapdescription)
+	});
+
+	$("#Description").html(html);
+}
+
+function callMapStatus(mapstatus){
+	var templateExample = _.template($('#templateName').html());
+	var html = templateExample({
+		"attribute":JSON.stringify(mapstatus)
+	});
+
+	$("#isPublic").append(html);
+}
+
+function callLocations(Locationlist){
+	for (var i = 0; i<Locationlist.length; i++) {
+		var templateExample = _.template($('#templateMap').html());
+		var html = templateExample({
+			"Location":JSON.stringify(Locationlist[i].myLocations)
+		});
+
+		$("#myLocations").append(html);
+	}
+}
+
+
+function callSharedWith(SharedUserlist){
+	for (var i = 0; i<SharedUserlist.length; i++) {
+		var templateExample = _.template($('#templateMap').html());
+		var html = templateExample({
+			"Shared_user":JSON.stringify(SharedUserlist[i].sharedWith)
+		});
+
+		$("#sharedWith").append(html);
+	}
+}
+
+function callSetMapname(mapname){
+	var name = $('input[name="setName"]').val();
+	$('#Mapname').html('<p> '+name+' </p>');
+}	
+
+function callSetMapdescription(mapdescription){
+	var description = $('input[description="setDescription"]').val();
+	$('#Description').html('<p> '+description+' </p>');
+}	
+
+function callSetMapstatus(mapstatus){
+	var status = $('input[status="setStatus"]').val();
+	$('#isPublic').html('<p> '+status+' </p>');
+}	
+
+function callSetUserSharedWith(idshared){
+	var id = $('input[id="setUserSharedWith"]').val();
+	$('#sharedWith').html('<p> '+sharedWith+' </p>');
+}	
+
+
+
+function callLogLocation(Location){
+	var templateExample = _.template($('#templateLog').html());
+	var html = templateExample({
+		"Locationid":JSON.stringify($('input[name="LocationID"]').val())
+	});
+
+	$("#logLocation").html(html);
+	
+}
+
+function callLogEvent(Event){
+	var templateExample = _.template($('#templateLog').html());
+	var html = templateExample({
+		"Eventid":JSON.stringify($('input[name="EventID"]').val())
+	});
+
+	$("#logEvent").html(html);
+	
+}
+
+function callDeleteLocation(Location){
+	var templateExample = _.template($('#templateDelete').html());
+	var html = templateExample({
+		"Locationid":JSON.stringify($('input[name="LocationID"]').val())
+	});
+
+	$("#logLocation").html(html);
+	
+}
+
+function callDeleteEvent(Event){
+	var templateExample = _.template($('#templateDelete').html());
+	var html = templateExample({
+		"Eventid":JSON.stringify($('input[name="EventID"]').val())
+	});
+
+	$("#logEvent").html(html);
+	
+}
+
+$(function (){
 		
-		$.ajax({
-			type: 'GET',
-			dataType: 'text',
-			data: id,
-			url:'/ws/User/1/Map/1/getName'
-		}).done(function(Map){
-				$('#MapName').html('MapName : '+Map);
+		
+		getServerDataText('GET','/ws/User/1/Map/1/getName',callMapname);
+		getServerDataText('GET','/ws/User/1/Map/1/getDescription',callMapDescription);
+		getServerDataText('GET','/ws/User/1/Map/1/getStatus',callMapStatus);
+		getServerData('GET','/ws/User/1/Map/1/getLocations',callLocations);
+		getServerData('GET','/ws/User/1/Map/1/getSharedWith',callSharedWith);
+				
+		$('#SetMapname').click(function(){
+			getServerData('POST','/ws/User/1/Map/1/setName/Remy',callSetMapname);
 		});
 		
-		$.ajax({
-			type: 'GET',
-			dataType: 'text',
-			data: id,
-			url:'/ws/User/1/Map/1/getDescription'
-		}).done(function(Map){
-				$('#Description').html('Description : '+Map);
-		});
 		
-		$.ajax({
-			type: 'GET',
-			dataType: 'boolean',
-			data: id,
-			url:'/ws/User/1/Map/1/getStatus'
-		}).done(function(Map){
-				$('#isPublic').html('isPublic : '+Map);
-		});
-		
-		$.ajax({
-			type: 'GET',
-			dataType: 'json',
-			url: '/ws/User/1/Map/1/getLocations'
-		}).done(function(Locationlist){
-			var m= '';
-			for (var i = 0; i<Maps.length; i++) {
-				m += '<p> MapLocation : '+Locationlist[i].myLocations '</p>';
-			}
-			$('#myLocations').append(m);
-		});
-		
-		$.ajax({
-			type: 'GET',
-			dataType: 'json',
-			url: '/ws/User/1/Map/1/getSharedWith'
-		}).done(function(SharedUserlist){
-			var m= '';
-			for (var i = 0; i<Maps.length; i++) {
-				m += '<p> SharedWith : '+SharedUserlist[i].sharedWith '</p>';
-			}
-			$('#sharedWith').append(m);
+		$('#SetMapdescription').click(function(){
+			getServerData('POST','/ws/User/1/Map/1/setDescription/Bio',callSetMapdescription);
 		});
 		
 		
-		
-		
-		
-		$('#setName').click(function(){
-			$.ajax({
-				type: 'POST',
-				dataType: 'text',
-				url:'/ws/User/1/Map/1/setName/Remy'
-			}).done(function(mapname){
-					var name = $('input[name="setName"]').val();
-					$('#name').html('<p> '+ name +' </p>');
-			});
+		$('#SetMapstatus').click(function(){
+			getServerData('POST','/ws/User/1/Map/1/setStatus/true',callSetMapstatus);
 		});
 		
-		$('#setDescription').click(function(){
-			$.ajax({
-				type: 'POST',
-				dataType: 'text',
-				url:'/ws/User/1/Map/1/setDescription/Bio'
-			}).done(function(mapdescription){
-					var description = $('input[description="setDescription"]').val();
-					$('#description').html('<p> '+ description +' </p>');
-			});
+		$('#SetUserSharedWith').click(function(){
+			getServerData('POST','/ws/User/1/Map/1/addUserToSharedWith/Alko',callSetUserSharedWith);
 		});
 		
+						
 		
-		$('#setStatus').click(function(){
-			$.ajax({
-				type: 'POST',
-				dataType: 'boolean',
-				url:'/ws/User/1/Map/1/setStatus/true'
-			}).done(function(mapstatus){
-					var status = $('input[status="setStatus"]').val();
-					$('#isPublic').html('<p> '+ isPublic +' </p>');
-			});
+		$('#AddLocation').click(function(){
+			getServerData('PUT','ws/User/1/Map/1/addLocation',callLogLocation);
 		});
 		
-		$('#addUserToSharedWith').click(function(){
-			$.ajax({
-				type: 'POST',
-				dataType: 'json',
-				url:'/ws/User/1/Map/1/addUserToSharedWith/Alko'
-			}).done(function(idshared){
-					var idshared = $('input[idshared="addUserToSharedWith"]').val();
-					$('#sharedWith').html('<p> '+ sharedWith +' </p>');
-			});
+		$('#AddEvent').click(function(){
+			getServerData('PUT','ws/User/1/Map/1/addEvent',callLogEvent);
 		});
-		
-		
-		
-		
-		$('#addLocation').click(function(){
-			$.ajax({
-				type:'PUT',
-				dataType: 'json',
-				url: 'ws/User/1/Map/1/addLocation'
-			}).done(function(maplocation){
-				$('#log').html('<p> Location with id: '+$('input[name="LocationID"]').val()+' is added</p>');
-			});
-		});
-		
-		
-		$('#addEvent').click(function(){
-			$.ajax({
-				type:'PUT',
-				dataType: 'json',
-				url: 'ws/User/1/Map/1/addEvent'
-			}).done(function(mapevent){
-				$('#log').html('<p> Event with id: '+$('input[name="EventID"]').val()+' is added</p>');
-			});
-		});
-		
-		
 		
 		
 		$('#DeleteLocation').click(function(){
-			$.ajax({
-				type: 'DELETE',
-				dataType: 'json',
-				url: 'ws/User/1/Map/1/removeLocation/1'
-			}).done(function(){
-				$('#log').html('<p> Location deleted</p>')
-			});
+			getServerData('DELETE','ws/User/1/Map/1/removeLocation',callDeleteLocation);
 		});
-		
 		
 		$('#DeleteEvent').click(function(){
-			$.ajax({
-				type: 'DELETE',
-				dataType: 'json',
-				url: 'ws/User/1/Map/1/removeEvent/1'
-			}).done(function(){
-				$('#log').html('<p> Event deleted</p>')
-			});
+			getServerData('DELETE','ws/User/1/Map/1/removeEvent',callDeleteEvent);
 		});
-
+		
+		
+		
 });
 
 	
-
