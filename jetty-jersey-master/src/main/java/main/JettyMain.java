@@ -56,7 +56,7 @@ public class JettyMain {
 		contexts.setHandlers(new Handler[] { handlerWebServices, handlerPortalCtx });
 		server.setHandler(contexts);
 		
-		//MURAT : Create Database
+		//Create Database
 		Database.fillDatabase();
 		
 		// Start server
