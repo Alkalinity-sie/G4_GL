@@ -8,7 +8,7 @@ public class Map {
     private static int numberOfExistingMap = 0;
     private String name;
     private String description;
-    private boolean isPublic; 
+    private boolean status; //true = public, false = private
     private List<Location> myLocations;
     private List<User> sharedWith;
     
@@ -17,7 +17,17 @@ public class Map {
         this.id = numberOfExistingMap;
         this.name = "";
         this.description = "";
-        this.isPublic = false;
+        this.status = false;
+        this.myLocations = new ArrayList<>();
+        this.sharedWith = new ArrayList<>();
+    }
+    
+    public Map(String name, String description, boolean status){
+        numberOfExistingMap++;
+        this.id = numberOfExistingMap;
+        this.name = name;
+        this.description = description;
+        this.status = status;
         this.myLocations = new ArrayList<>();
         this.sharedWith = new ArrayList<>();
     }
@@ -46,13 +56,14 @@ public class Map {
         this.description = description;
     }
 
-    public boolean isIsPublic() {
-        return isPublic;
+    public boolean getStatus() {
+    	return this.status;
     }
-
-    public void setIsPublic(boolean isPublic) {
-        this.isPublic = isPublic;
+    
+    public void setStatus(boolean status) {
+    	this.status = status;
     }
+ 
 
     public List<Location> getMyLocations() {
         return myLocations;

@@ -12,10 +12,17 @@ public class Event extends Location {
         super();
         numberOfExistingEvent++;
         this.id = numberOfExistingEvent;
-        this.beginning = LocalDateTime.now();
-        this.end = LocalDateTime.now();
     }
 
+    public Event(String name, String description, String address, LocalDateTime beginning, LocalDateTime end){
+        super(name, description, address);
+        numberOfExistingEvent++;
+        this.id = numberOfExistingEvent;
+        this.beginning = beginning;
+        this.end = end;
+    }
+
+    
     public int getId() {
         return id;
     }

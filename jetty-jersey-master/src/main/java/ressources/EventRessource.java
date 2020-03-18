@@ -3,7 +3,6 @@ package ressources;
 import couchedepersistance.EventDao;
 import couchedepersistance.Event;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -29,7 +28,8 @@ public class EventRessource implements EventDao {
 				@PathParam("UserID")  int user_id, 
 	    		@PathParam("MapID")   int map_id, 
 	    		@PathParam("EventID") int event_id) {
-			return new Event();
+			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			return e;
 		}
 	
 		@GET
@@ -39,7 +39,9 @@ public class EventRessource implements EventDao {
         		@PathParam("UserID")  int user_id, 
         		@PathParam("MapID")   int map_id, 
         		@PathParam("EventID") int event_id) {
-			return LocalDateTime.now();
+			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return null;
+			return e.getBeginning();
     	}
 		@GET
 		@Path("/getEnd")
@@ -48,7 +50,9 @@ public class EventRessource implements EventDao {
         		@PathParam("UserID")  int user_id, 
         		@PathParam("MapID")   int map_id, 
         		@PathParam("EventID") int event_id) {
-			return LocalDateTime.now();
+			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return null;
+			return e.getEnd();
         }
 		
 		@GET
@@ -58,7 +62,9 @@ public class EventRessource implements EventDao {
 	    		@PathParam("UserID")     int user_id, 
 	    		@PathParam("MapID")      int map_id, 
 	    		@PathParam("EventID") int event_id) {
-	    	return "random_location_name";
+			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return null;
+			return e.getName();
 	    }
 		
 		@GET
@@ -68,7 +74,9 @@ public class EventRessource implements EventDao {
 	    		@PathParam("UserID")     int user_id, 
 	    		@PathParam("MapID")      int map_id, 
 	    		@PathParam("EventID") int event_id) {
-	    	return "random_description";
+			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return null;
+			return e.getDescription();
 	    }
 		
 		@GET
@@ -78,7 +86,9 @@ public class EventRessource implements EventDao {
 	    		@PathParam("UserID")     int user_id, 
 	    		@PathParam("MapID")      int map_id, 
 	    		@PathParam("EventID") int event_id) {
-	    	return "random_address";
+			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return null;
+			return e.getAddress();
 	    }
 		
 		@GET
@@ -88,11 +98,9 @@ public class EventRessource implements EventDao {
 	    		@PathParam("UserID")     int user_id, 
 	    		@PathParam("MapID")      int map_id, 
 	    		@PathParam("EventID") int event_id){
-			List<String> labels = new ArrayList<>();
-	        for(int i = 0; i < 5; i++){
-	            labels.add("label "+i);
-	        }
-	        return labels;
+			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return null;
+			return e.getLabels();
 	    }
 		
 		@GET
@@ -102,11 +110,9 @@ public class EventRessource implements EventDao {
 	    		@PathParam("UserID")     int user_id, 
 	    		@PathParam("MapID")      int map_id, 
 	    		@PathParam("EventID") int event_id){
-			List<ImageIcon> photos = new ArrayList<>();
-	        for(int i = 0; i < 10; i++){
-	            photos.add(new ImageIcon());
-	        }
-	        return photos;
+			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return null;
+			return e.getPhotos();
 	    }
 		
 		/* POST */
@@ -122,7 +128,15 @@ public class EventRessource implements EventDao {
 	    		@PathParam("Month")      int month, 
 	    		@PathParam("DayOfMonth") int dayOfMonth, 
 	    		@PathParam("Hour")       int hour, 
-	    		@PathParam("Minute")     int minute) {}
+	    		@PathParam("Minute")     int minute) {
+			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return;
+			String chaine = ""+year+"-"+month+"-"+dayOfMonth+"T"+hour+":"+minute+":"+"00.000"; 
+			//exemple : "2020-10-06T17:00:00.000"
+			LocalDateTime beginning = LocalDateTime.parse(chaine);
+			e.setBeginning(beginning);
+			
+		}
 		
 		@POST
 		@Path("/setEnd/{Year}/{Month}/{DayOfMonth}/{Hour}/{Minute}")
@@ -135,7 +149,14 @@ public class EventRessource implements EventDao {
 	    		@PathParam("Month")      int month, 
 	    		@PathParam("DayOfMonth") int dayOfMonth, 
 	    		@PathParam("Hour")       int hour, 
-	    		@PathParam("Minute")     int minute) {}
+	    		@PathParam("Minute")     int minute) {
+			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return;
+			String chaine = ""+year+"-"+month+"-"+dayOfMonth+"T"+hour+":"+minute+":"+"00.000"; 
+			//exemple : "2020-10-06T17:00:00.000"
+			LocalDateTime ending = LocalDateTime.parse(chaine);
+			e.setBeginning(ending);
+		}
 	    
 	    @POST
 	    @Path("/setName/{Name}")
@@ -144,7 +165,11 @@ public class EventRessource implements EventDao {
 	    		@PathParam("UserID")     int user_id, 
 	    		@PathParam("MapID")      int map_id, 
 	    		@PathParam("EventID")    int event_id, 
-	    		@PathParam("Name")       String name) {}
+	    		@PathParam("Name")       String name) {
+	    	Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return;
+			e.setName(name);
+	    }
 	    
 	    @POST
 	    @Path("/setDescription/{Description}")
@@ -153,7 +178,11 @@ public class EventRessource implements EventDao {
 	    		@PathParam("UserID")      int user_id, 
 	    		@PathParam("MapID")       int map_id, 
 	    		@PathParam("EventID")     int event_id, 
-	    		@PathParam("Description") String description) {}
+	    		@PathParam("Description") String description) {
+	    	Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return;
+			e.setDescription(description);
+	    }
 	    
 	    @POST
 	    @Path("/setAddress/{Address}")
@@ -162,7 +191,11 @@ public class EventRessource implements EventDao {
 	    		@PathParam("UserID")  int user_id, 
 	    		@PathParam("MapID")   int map_id, 
 	    		@PathParam("EventID") int event_id, 
-	    		@PathParam("Address") String address) {}
+	    		@PathParam("Address") String address) {
+	    	Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return;
+			e.setaddress(address);
+	    }
 	    
 	    @POST
 	    @Path("/addLabel/{Label}")
@@ -171,7 +204,11 @@ public class EventRessource implements EventDao {
 	    		@PathParam("UserID")  int user_id, 
 	    		@PathParam("MapID")   int map_id, 
 	    		@PathParam("EventID") int event_id, 
-	    		@PathParam("Label")   String label) {}
+	    		@PathParam("Label")   String label) {
+	    	Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return;
+			e.getLabels().add(label);
+	    }
 	    
 	    @POST
 	    @Path("/addPhoto/{Photo}")
@@ -180,5 +217,9 @@ public class EventRessource implements EventDao {
 	    		@PathParam("UserID")  int user_id, 
 	    		@PathParam("MapID")   int map_id, 
 	    		@PathParam("EventID") int event_id, 
-	    		@PathParam("Photo")   ImageIcon photo) {}
+	    		@PathParam("Photo")   ImageIcon photo) {
+	    	Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return;
+			e.getPhotos().add(photo);
+	    }
 }

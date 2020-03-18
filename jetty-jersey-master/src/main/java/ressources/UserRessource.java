@@ -1,6 +1,5 @@
 package ressources;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -15,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import couchedepersistance.Map;
 import couchedepersistance.User;
 import couchedepersistance.UserDao;
+import ressources.Database;
 
 @Path("/User/{UserID}")
 @Produces(MediaType.APPLICATION_JSON)
@@ -23,48 +23,48 @@ public class UserRessource implements UserDao {
 	
 	/* GET */
 	
+	
 	@GET
 	@Path("/getUser")
 	//get a user
     public User getUser (@PathParam("UserID") int user_id) {
-    	return new User();
+    	return Database.getUser(user_id);
     }
 	
 	@GET
 	@Path("/getUsername")
 	//retrieval of a username
     public String getUsername (@PathParam("UserID") int user_id) {
-		User utilisateur = new User("Jean","123456789");
-    	return utilisateur.getUsername();
+    	User u =  Database.getUser(user_id);
+    	if(u==null) return "null";
+    	return u.getUsername();
     }
 	
 	@GET
 	@Path("/getPassword")
     //retrieval of a user's password 
     public String getPassword (@PathParam("UserID") int user_id) {
-    	return "random_password";
+		User u =  Database.getUser(user_id);
+    	if(u==null) return "null";
+    	return u.getPassword();
     }
 	
 	@GET
 	@Path("/getPersonnalMaps")
     //retrieval of user's list of maps that he created
     public List<Map> getPersonnalMaps (@PathParam("UserID") int user_id){
-		List<Map> personnelMaps = new ArrayList<>();
-        for(int i = 0; i < 10; i++){
-            personnelMaps.add(new Map());
-        }
-        return personnelMaps;
+		User u =  Database.getUser(user_id);
+    	if(u==null) return null;
+    	return u.getMyMaps();
     }
 	
 	@GET
 	@Path("/getMapsSharedToMe")
     //retrieval of a user's list of map that other users shared with him
     public List<Map> getMapsSharedToMe (@PathParam("UserID") int user_id){
-		List<Map> sharedToHim = new ArrayList<>();
-        for(int i = 0; i < 6; i++){
-            sharedToHim.add(new Map());
-        }
-        return sharedToHim;
+		User u =  Database.getUser(user_id);
+    	if(u==null) return null;
+    	return u.getSharedToMe();
     }
 	
 	/* POST */
@@ -72,12 +72,20 @@ public class UserRessource implements UserDao {
 	@POST
 	@Path("/setUsername/{Username}")
 	//set of a username
-    public void setUsername (@PathParam("UserID") int user_id, @PathParam("Username") String username) {}
+    public void setUsername (@PathParam("UserID") int user_id, @PathParam("Username") String username) {
+		User u =  Database.getUser(user_id);
+    	if(u==null) return;
+    	u.setUsername(username);
+	}
 	
 	@POST
 	@Path("/setPassword/{Password}")
     //set of a user's password 
-	public void setPassword (@PathParam("UserID") int user_id, @PathParam("Password") String password) {}
+	public void setPassword (@PathParam("UserID") int user_id, @PathParam("Password") String password) {
+		User u =  Database.getUser(user_id);
+    	if(u==null) return;
+    	u.setUsername(password);
+	}
 	
 	/* PUT */
 	
@@ -85,7 +93,11 @@ public class UserRessource implements UserDao {
 	@Path("/addPersonnalMap")
     //add a new (empty) personnal map
 	public int addPersonnalMap (@PathParam("UserID") int user_id) {
-		return 0;
+		User u =  Database.getUser(user_id);
+    	if(u==null) return -1;
+    	Map m = new Map();
+    	u.getMyMaps().add(m);
+    	return m.getId();
 	}
 	
 	@PUT
@@ -94,18 +106,32 @@ public class UserRessource implements UserDao {
 	public void addMapToSharedToMe (
 			@PathParam("FromUserID")  int FROM_user_id, 
 			@PathParam("UserID")      int user_id,
-			@PathParam("SharedMapID") int map_id) {}
+			@PathParam("SharedMapID") int map_id) {
+		User destination =  Database.getUser(user_id);
+		Map m = Database.getPersonnalMap(FROM_user_id, map_id);
+    	if(destination==null || m==null) return;
+    	destination.getSharedToMe().add(m);
+		
+	}
 	
 	/* DELETE */
 	
 	@DELETE
 	@Path("/removePersonnalMap/{PersonnalMapID}")
 	//remove a personnal map
-    public void removePersonnalMap(@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) {}
+    public void removePersonnalMap(@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) {
+		User u = Database.getUser(user_id);
+		Map m = Database.getPersonnalMap(user_id, map_id);
+		u.getMyMaps().remove(m);
+	}
 	
 	@DELETE
 	@Path("/removeSharedMap/{SharedMapID}")
 	//remove a shared map
-    public void removeSharedMap(@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) {}
+    public void removeSharedMap(@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) {
+		User u = Database.getUser(user_id);
+		Map m = Database.getSharedMap(user_id, map_id);
+		u.getSharedToMe().remove(m);
+	}
 	
 }

@@ -24,6 +24,16 @@ public class Location {
         this.photos = new ArrayList<>();
     }
     
+    public Location (String name, String description, String address){
+        numberOfExistingLocation++;
+        this.id = numberOfExistingLocation;
+        this.name = name;
+        this.description = description;
+        this.address = address;
+        this.labels = new ArrayList<>();
+        this.photos = new ArrayList<>();
+    }
+    
     public int getId() {
         return id;
     }

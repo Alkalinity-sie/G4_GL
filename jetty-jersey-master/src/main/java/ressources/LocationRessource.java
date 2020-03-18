@@ -1,7 +1,6 @@
 package ressources;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -31,7 +30,7 @@ public class LocationRessource implements LocationDao {
 			@PathParam("UserID")  int user_id, 
     		@PathParam("MapID")   int map_id, 
     		@PathParam("EventID") int location_id) {
-		return new Location();
+		return Database.getLocation(user_id, map_id, location_id);
 	}
 	
 	@GET
@@ -41,7 +40,9 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id) {
-    	return "random_location_name";
+		Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return "null";
+		return l.getName();
     }
 	
 	@GET
@@ -51,7 +52,9 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id) {
-    	return "random_description";
+		Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return "null";
+		return l.getDescription();
     }
 	
 	@GET
@@ -61,7 +64,9 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id) {
-    	return "random_address";
+		Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return "null";
+		return l.getAddress();
     }
 	
 	@GET
@@ -71,11 +76,9 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id,
     		@PathParam("LocationID") int location_id){
-		List<String> labels = new ArrayList<>();
-        for(int i = 0; i < 5; i++){
-            labels.add("label "+i);
-        }
-        return labels;
+		Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return null;
+		return l.getLabels();
     }
 	
 	@GET
@@ -85,11 +88,9 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id){
-		List<ImageIcon> photos = new ArrayList<>();
-        for(int i = 0; i < 10; i++){
-            photos.add(new ImageIcon());
-        }
-        return photos;
+		Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return null;
+		return l.getPhotos();
     }
 	
 	/* POST */
@@ -101,7 +102,11 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id, 
-    		@PathParam("Name")String name) {}
+    		@PathParam("Name")String name) {
+    	Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return;
+		l.setName(name);
+    }
     
     @POST
     @Path("/setDescription/{Description}")
@@ -110,7 +115,11 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id, 
-    		@PathParam("Description") String Description) {}
+    		@PathParam("Description") String description) {
+    	Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return;
+		l.setDescription(description);
+    }
     
     @POST
     @Path("/setAddress/{Address}")
@@ -119,7 +128,11 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id, 
-    		@PathParam("Address") String address) {}
+    		@PathParam("Address") String address) {
+    	Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return;
+		l.setaddress(address);
+    }
     
     @POST
     @Path("/addLabel/{Label}")
@@ -128,7 +141,11 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id, 
-    		@PathParam("Label") String label) {}
+    		@PathParam("Label") String label) {
+    	Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return;
+		l.getLabels().add(label);
+    }
     
     @POST
     @Path("addPhoto/{Photo}")
@@ -137,6 +154,10 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id, 
-    		@PathParam("Photo") ImageIcon photo) {}
+    		@PathParam("Photo") ImageIcon photo) {
+    	Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return;
+		l.getPhotos().add(photo);
+    }
     
 }

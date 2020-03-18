@@ -15,12 +15,12 @@
 
 }
 #Personnal{
-	height: 450px;
+	height: 506px;
     width: 340px;
     border: 2px solid black;
-    position: relative;
-    left: 420px;
-    top: -304px;
+    position: absolute;
+    left: 1132px;
+    top: 80px;
 }
 #Personnal h2{
 	position: relative;
@@ -41,18 +41,29 @@
 #log{
     position: relative;
     left: 19px;
+    top: 32px;
+    height: 20px;
 }
 #PersonnalMaps{
 	position: relative;
 	left: 87px;
+	height: 200px;
+	width: 1300px;
+	border : 1px;
+	top: 25px;
+	
+}
+#DeleteMap{
+	position: relative;
+    top: 30px;
+    right: 24px;
 }
 #Shared{
 	width: 317px;
 	border: 2px solid black;
-	position: relative;
-	top: -757px;
-	width: 317px;
-	left: 780px;
+	position: absolute;
+    top: 80px;
+    left: 1483px;
 }
 #Shared h2{
 	position: relative;
@@ -61,11 +72,15 @@
 #MapSharedToHim{
 	position: relative;
 	left: 80px;
+	height: 308px;
 }
 
 #Shared input{
 	position: relative;
 	left: 16px;
+}
+#logShared{
+	height: 20px;
 }
 
 #ChooseSharedMaps{
@@ -77,10 +92,64 @@
 	position: relative;
 	left: 16px;
 }
+#DeleteSharedMap{
+	position: relative;
+    top: 10px;
+    left: 10px;
+}
 
-.Maps{
-	height: 200px;
-	width: 1300px;
-	border : 1px;
-	
+#Map{
+	height: 400px;
+    width: 700px;
+    position: absolute;
+    top: 80px;
+    left: 420px;
+    border: 2px solid black;
+}
+#MapName{
+    position: relative;
+    left: 10px;
+}
+
+#Description{
+	position: relative;
+    left: 10px;
+    bottom: -10px;
+}
+
+#Status{
+	position: relative;
+    top: -80px;
+    left: 550px;
+}
+#Location{
+    position: relative;
+    left: 10px;
+    bottom: -50px;
+}
+
+#SharedWith{
+    position: relative;
+    bottom: -120px;
+    left: 10px;
+}
+
+#SetMapName{
+	position: relative;
+    top: -90px;
+    left: 10px;	
+}
+#Map input{
+	position: relative;
+    left: 10px;
+    top: -90px;
+}
+
+#Event{
+	height: 800px;
+    width: 340px;
+    border: 2px solid black;
+    position: absolute;
+    top: 500px;
+   
 }
