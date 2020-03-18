@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<script id="templateUser" type="text/template">
+			<p>
+				Username : <%= name %> Password : <%= mdp%>
+			</p>
+		</script>
+		<script id="templateName" type="text/template">
+			<p>
+				<%= attribute %>
+			</p>
+		</script>
+		<script id="templateMap" type="text/template">
+			<p>
+				MapId : <%= id %> MapName : <%= name%>
+			</p>
+		</script>
+		<script id="templateDescription" type="text/template">
+				<%= description %>
+		</script>
+		<script id="templateLog" type="text/template">
+				<p>
+					<%= logAttribute %>
+				</p>
+		</script>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<h1>GLA : Groupe 4</h1>
+		<div id="User">
+			<h2>User</h2>
+			<div>
+				<div id ="UserInfo"></div>
+				<input type="text" name="UserID">
+				<button id="getUser">get User</button>
+			</div>
+			<div id = "name"></div>
+			<input type="text" name="setName">
+			<button id = "SetUsername">Set Username</button>
+			<input type="text" name="Password">
+			<button id = "SetPassword">Set Password</button>
+			<button id="MyMaps">My maps</button>
+			<button id ="SharedMaps">Maps Shared with me</button>
+		</div>
+		<div id="Personnal"> 	
+			<h2>Personnal Maps</h2>
+			<input type="text" name="MapID">
+			<button id="ChooseMaps">Select</button>
+			<input type="text" name="MapName">
+			<button id="AddMap">Add</button>
+			<input type="text" name="MapIDtoDelete">
+			<button id ="DeleteMap">Delete</button>
+			<div id ="log"></div>
+			<div id ="PersonnalMaps"></div>
+
+		</div>
+		<div id ="Shared">
+			<h2>Shared Maps</h2>
+			<input type="text" name="SharedMapID">
+			<button id="ChooseSharedMaps">Select</button>
+			<p>From user Id</p>
+			<input type="text" name="SharedMapFrom">
+			<p>Map id</p>
+			<input type="text" name="SharedMapIDtoAdd">
+			<button id="AddSharedMap">Add</button>
+			<input type="text" name="SharedMapIDtoDelete">
+			<button id ="DeleteSharedMap">Delete</button>
+			<div id ="logShared"></div>
+			<div id ="MapSharedToHim"></div>
+
+		</div>
+		<div id="Map">
+			<h2 id="MapName">Name :</h2>
+			<div id = "Description">Description : </div>
+			<div id= "Status">Status : </div>
+			<div id= "Location">Locations :</div>
+			<div id="SharedWith">Shared with: </div>
+			<button id="SetMapName">Set name</button>
+			<input type="text" name="MapNameinput">
+
+		</div>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+	    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+		<script type="text/javascript" src="user.js"></script>
+	</body>
