@@ -1,6 +1,7 @@
 package couchedepersistance;
 
 import java.util.List;
+
 import javax.swing.ImageIcon;
 
 public interface LocationDao {
@@ -32,6 +33,10 @@ public interface LocationDao {
     void addLabel (int user_id, int map_id, int location_id, String label);
     //add a photo to a location
     void addPhoto (int user_id, int map_id, int location_id, ImageIcon photo);
+    //remove a label
+    void removeLabel (int user_id, int map_id, int location_id, String label);
+    //remove a photo
+    void removePhoto (int user_id, int map_id, int location_id, int photo_id);
     
     /* NO PUT OR DELETE REQUIRED HERE */
     

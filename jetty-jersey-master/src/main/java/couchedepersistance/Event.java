@@ -3,8 +3,9 @@ package couchedepersistance;
 import java.time.LocalDateTime;
 
 public class Event extends Location {
-    private int id;
+  
     private static int numberOfExistingEvent = 0;
+    private int id;
     private LocalDateTime beginning;
     private LocalDateTime end;
     

@@ -1,10 +1,11 @@
 package ressources;
 
 import couchedepersistance.EventDao;
+import couchedepersistance.Photo;
 import couchedepersistance.Event;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.ImageIcon;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -97,7 +98,7 @@ public class EventRessource implements EventDao {
 	    public List<String> getLabels (
 	    		@PathParam("UserID")     int user_id, 
 	    		@PathParam("MapID")      int map_id, 
-	    		@PathParam("EventID") int event_id){
+	    		@PathParam("EventID")    int event_id){
 			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
 			if(e == null) return null;
 			return e.getLabels();
@@ -109,10 +110,15 @@ public class EventRessource implements EventDao {
 	    public List<ImageIcon> getPhotos (
 	    		@PathParam("UserID")     int user_id, 
 	    		@PathParam("MapID")      int map_id, 
-	    		@PathParam("EventID") int event_id){
+	    		@PathParam("EventID")    int event_id){
 			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
 			if(e == null) return null;
-			return e.getPhotos();
+			List<Photo> photos = e.getPhotos();
+			List<ImageIcon> res = new ArrayList<>();
+			for(Photo p : photos) {
+				res.add(p.getPhoto());
+			}
+			return res;
 	    }
 		
 		/* POST */
@@ -220,6 +226,38 @@ public class EventRessource implements EventDao {
 	    		@PathParam("Photo")   ImageIcon photo) {
 	    	Event e = (Event) Database.getEvent(user_id, map_id, event_id);
 			if(e == null) return;
-			e.getPhotos().add(photo);
+			e.getPhotos().add(new Photo(photo));
+	    }
+	    
+	    @POST
+	    @Path("/removeLabel/{Label}")
+	    //add a label to a location
+	    public void removeLabel (
+	    		@PathParam("UserID")   int user_id, 
+	    		@PathParam("MapID")    int map_id, 
+	    		@PathParam("EventID")  int event_id, 
+	    		@PathParam("Label")    String label) {
+	    	Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return;
+			e.getLabels().remove(label);
+	    }
+	    
+	    @POST
+	    @Path("removePhoto/{PhotoID}")
+	    //add a photo to a location
+	    public void removePhoto (
+	    		@PathParam("UserID")  int user_id, 
+	    		@PathParam("MapID")   int map_id, 
+	    		@PathParam("EventID") int event_id,
+	    		@PathParam("PhotoID") int photo_id) {
+	    	Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			if(e == null) return;
+			List<Photo> photos = e.getPhotos();
+			for(Photo p : photos) {
+				if(p.getId()==photo_id) {
+					photos.remove(p);
+					break;
+				}
+			}
 	    }
 }

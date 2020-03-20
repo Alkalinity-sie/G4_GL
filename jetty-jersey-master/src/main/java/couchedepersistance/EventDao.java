@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 
+
 public interface EventDao {
 	
 	/* GET */
@@ -34,7 +35,6 @@ public interface EventDao {
     //set an end to an event
     void setEnd (int user_id, int map_id, int event_id, int year, int month, int dayOfMonth, int hour, int minute);
     //set an event's name
-    
     void setName (int user_id, int map_id, int event_id, String name);
     //set an event's description
     void setDescription (int user_id, int map_id, int event_id, String Description);
@@ -44,6 +44,10 @@ public interface EventDao {
     void addLabel (int user_id, int map_id, int event_id, String label);
     //add a photo to an event
     void addPhoto (int user_id, int map_id, int event_id, ImageIcon photo);
+    //remove a label
+    void removeLabel (int user_id, int map_id, int event_id, String label);
+    //remove a photo
+    void removePhoto (int user_id, int map_id, int event_id, int photo_id);
     
     /* NO PUT OR DELETE REQUIRED HERE */
     

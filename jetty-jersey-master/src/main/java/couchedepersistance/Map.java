@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Map {
+    
+    private static int numberOfExistingMap;
     private int id;
-    private static int numberOfExistingMap = 0;
     private String name;
     private String description;
     private boolean status; //true = public, false = private

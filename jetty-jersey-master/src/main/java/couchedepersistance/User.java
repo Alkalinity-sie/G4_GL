@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User {
+
+    private static int numberOfExistingUser;
     private int id;
-    private static int numberOfExistingUser = 0;
     private String username;
     private String password;
     private List<Map> sharedToMe;

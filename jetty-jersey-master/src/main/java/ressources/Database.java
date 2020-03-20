@@ -68,8 +68,8 @@ public class Database {
 		User pierre = new User("Pierre","654321");
 		
 		//maps
-		Map jeanMap1 = new Map("Resto' ","Carte des restaurants", false); // id = 0
-		Map pierreMap1 = new Map("Parcs ","Carte des parcs", false);      // id = 1
+		Map jeanMap1 = new Map("Resto' ","Carte des restaurants", false); // id = 1
+		Map pierreMap1 = new Map("Parcs ","Carte des parcs", false);      // id = 2
 
 		//listes de l'utilisateur Jean
 		List<Map> jeanPersonnalMaps = new ArrayList<>();

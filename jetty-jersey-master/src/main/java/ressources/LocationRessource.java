@@ -1,6 +1,7 @@
 package ressources;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 
 import couchedepersistance.Location;
 import couchedepersistance.LocationDao;
+import couchedepersistance.Photo;
 
 
 @Path("/User/{UserID}/Map/{MapID}/Location/{LocationID}")
@@ -90,7 +92,12 @@ public class LocationRessource implements LocationDao {
     		@PathParam("LocationID") int location_id){
 		Location l = Database.getLocation(user_id, map_id, location_id);
 		if(l == null) return null;
-		return l.getPhotos();
+		List<Photo> photos = l.getPhotos();
+		List<ImageIcon> res = new ArrayList<>();
+		for(Photo p : photos) {
+			res.add(p.getPhoto());
+		}
+		return res;
     }
 	
 	/* POST */
@@ -154,10 +161,41 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id, 
-    		@PathParam("Photo") ImageIcon photo) {
+    		@PathParam("Photo")      ImageIcon photo) {
     	Location l = Database.getLocation(user_id, map_id, location_id);
 		if(l == null) return;
-		l.getPhotos().add(photo);
+		l.getPhotos().add(new Photo(photo));
+    }
+    
+    @POST
+    @Path("/removeLabel/{Label}")
+    //add a label to a location
+    public void removeLabel (
+    		@PathParam("UserID")     int user_id, 
+    		@PathParam("MapID")      int map_id, 
+    		@PathParam("LocationID") int location_id, 
+    		@PathParam("Label")      String label) {
+    	Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return;
+		l.getLabels().remove(label);
+    }
+    
+    @POST
+    @Path("removePhoto/{PhotoID}")
+    //add a photo to a location
+    public void removePhoto (
+    		@PathParam("UserID")     int user_id, 
+    		@PathParam("MapID")      int map_id, 
+    		@PathParam("LocationID") int location_id,
+    		@PathParam("PhotoID")    int photo_id) {
+    	Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return;
+		List<Photo> photos = l.getPhotos();
+		for(Photo p : photos) {
+			if(p.getId()==photo_id) {
+				photos.remove(p);
+			}
+		}
     }
     
 }

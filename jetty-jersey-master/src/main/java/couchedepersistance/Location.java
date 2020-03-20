@@ -2,17 +2,17 @@ package couchedepersistance;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.ImageIcon;
+
 
 public class Location {
     
+    private static int numberOfExistingLocation;
     private int id;
-    private static int numberOfExistingLocation = 0;
     private String name;
     private String description;
     private String address;
     private List<String> labels;
-    private List<ImageIcon> photos;
+    private List<Photo> photos;
     
     public Location (){
         numberOfExistingLocation++;
@@ -73,12 +73,12 @@ public class Location {
     public void setLabels(List<String> labels) {
         this.labels = labels;
     }
-
-    public List<ImageIcon> getPhotos() {
-        return photos;
+    
+    public List<Photo> getPhotos() {
+        return this.photos;
     }
 
-    public void setPhotos(List<ImageIcon> photos) {
+    public void setPhotos(List<Photo> photos) {
         this.photos = photos;
     }
     
