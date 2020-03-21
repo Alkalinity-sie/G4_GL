@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+	<body>
+	
+		<script id="templateName" type="text/template">
+			<p>
+				MapName : <%= attribute %>
+			</p>
+		</script>
+		
+		<script id="templateDescription" type="text/template">
+				MapDescritpion : <%= description %>
+		</script>
+		
+		
+		<script id="templateMap" type="text/template">
+			<p>
+				Locationlist : <%= myLocations %> 
+			</p>
+		</script>
+		
+		<script id="templateMap" type="text/template">
+			<p>
+				SharedUserlist : <%= sharedWith %> 
+			</p>
+		</script>
+		
+		
+		
+		<script id="templateLog" type="text/template">
+				<p>
+					Location with id: <%= LocationID%> is added
+				</p>
+		</script>
+		
+		<script id="templateLog" type="text/template">
+				<p>
+					Event with id: <%= EventID%> is added
+				</p>
+		</script>
+		
+		
+		<script id="templateDelete" type="text/template">
+				<p>
+					Location with id: <%= LocationID%> is deleted
+				</p>
+		</script>
+		
+		<script id="templateDelete" type="text/template">
+				<p>
+					Event with id: <%= EventID%> is deleted
+				</p>
+		</script>
+
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<h1>GLA : Groupe 4</h1>
+		
+		
+		<div id="GetMap">
+			<h2>MapAttribute</h2>
+			
+			<div id ="MapName"></div>
+			<input type="text" name="getMapName">
+			<button id="getMapName">get MapName</button>
+			
+			<div id ="MapDescritpion"></div>
+			<input type="text" name="getMapDescritpion">
+			<button id="getMapDescritpion">get MapDescritpion</button>
+			
+			<div id ="MapStatus"></div>
+			<input type="text" name="getMapStatus">
+			<button id="getMapStatus">get MapStatus</button>
+			
+			<div id ="MapLocations"></div>
+			<input type="text" name="getMapLocations">
+			<button id="getMapLocations">get MapLocations</button>
+			
+			<div id ="UserSharedWith"></div>
+			<input type="text" name="getUserSharedWith">
+			<button id="getUserSharedWith">get UserSharedWith</button>
+		</div>
+	
+	
+		
+		<div id="SetMap">
+			<h2>Map</h2>
+			
+			<div id = "MapName"></div>
+			<input type="text" name="setMapName">
+			<button id = "SetMapName">Set MapName</button>
+			
+			<div id = "MapDescription"></div>
+			<input type="text" name="setMapDescription">
+			<button id = "SetMapDescription">Set MapDescription</button>
+			
+			<div id = "MapStatus"></div>
+			<input type="text" name="setMapStatus">
+			<button id = "SetMapStatus">Set MapStatus</button>
+			
+			<div id = "UserSharedWith"></div>
+			<input type="text" name="setUserSharedWith">
+			<button id = "SetUserSharedWith">Set UserSharedWith</button>
+		</div>
+		
+	
+		<div id="PutMap">
+			<h2>PUT-Locations&Event</h2>
+			
+			<div id ="Location"></div>
+			<input type="text" name="addLocation">
+			<button id="addLocation">Add Location</button>
+			
+			<div id ="Event"></div>
+			<input type="text" name="addEvent">
+			<button id="addEvent">Add Event</button>
+		</div>
+		
+		<div id="DeleteMap">
+			<h2>DELETE-Locations&Event</h2>
+			
+			<div id ="Location"></div>
+			<input type="text" name="deleteLocation">
+			<button id="deleteLocation">Delete Location</button>
+			
+			<div id ="Event"></div>
+			<input type="text" name="deleteEvent">
+			<button id="deleteEvent">Delete Event</button>
+		</div>
+		
+		
+		<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+	  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+		<script type="text/javascript" src="map.js"></script>
+	</body>
+</html>
