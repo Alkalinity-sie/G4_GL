@@ -3,20 +3,25 @@ package couchedepersistance;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 
+@PersistenceCapable
 public class Location {
-    
-    private static int numberOfExistingLocation;
-    private int id;
+
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.NATIVE)
+    private Long id;
+
     private String name;
     private String description;
     private String address;
     private List<String> labels;
-    private List<Photo> photos;
+    private List<Long> photos;
     
     public Location (){
-        numberOfExistingLocation++;
-        this.id = numberOfExistingLocation;
         this.name = "";
         this.description = "";
         this.address = "";
@@ -25,8 +30,6 @@ public class Location {
     }
     
     public Location (String name, String description, String address){
-        numberOfExistingLocation++;
-        this.id = numberOfExistingLocation;
         this.name = name;
         this.description = description;
         this.address = address;
@@ -34,11 +37,11 @@ public class Location {
         this.photos = new ArrayList<>();
     }
     
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -62,7 +65,7 @@ public class Location {
         return address;
     }
 
-    public void setaddress(String address) {
+    public void setAddress(String address) {
         this.address = address;
     }
 
@@ -74,12 +77,11 @@ public class Location {
         this.labels = labels;
     }
     
-    public List<Photo> getPhotos() {
+    public List<Long> getPhotos() {
         return this.photos;
     }
 
-    public void setPhotos(List<Photo> photos) {
+    public void setPhotos(List<Long> photos) {
         this.photos = photos;
     }
-    
 }

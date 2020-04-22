@@ -2,7 +2,7 @@ $(function (){
 	$.ajax({
 		type: 'GET',
 		dataType: 'text',
-		url:'/ws/User/1/Map/1/Event/1/getBeginning'
+		url:'/ws/User/0/Map/0/Event/0/getBeginning'
 	}).done(function(datetime){
 			$('#EventBeginning').append('<p>'+"begin: "+datetime+'</p>');
 			console.log(datetime)

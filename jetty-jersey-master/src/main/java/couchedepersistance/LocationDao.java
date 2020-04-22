@@ -32,7 +32,7 @@ public interface LocationDao {
     //add a label to a location
     void addLabel (int user_id, int map_id, int location_id, String label);
     //add a photo to a location
-    void addPhoto (int user_id, int map_id, int location_id, ImageIcon photo);
+    int addPhoto (int user_id, int map_id, int location_id, ImageIcon photo);
     //remove a label
     void removeLabel (int user_id, int map_id, int location_id, String label);
     //remove a photo

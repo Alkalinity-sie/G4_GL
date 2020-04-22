@@ -3,38 +3,63 @@ package couchedepersistance;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
+
+@PersistenceCapable
 public class User {
 
-    private static int numberOfExistingUser;
-    private int id;
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.NATIVE)
+    private Long id;
+
     private String username;
     private String password;
-    private List<Map> sharedToMe;
-    private List<Map> myMaps;
+    private List<Long> sharedToMe;
+    private List<Long> myMaps;
     
     public User (){
-        numberOfExistingUser++;
-        this.id = numberOfExistingUser;
         this.username = "";
         this.password = "";
-        this.sharedToMe = new ArrayList<>();
-        this.myMaps = new ArrayList<>();
+        this.sharedToMe = new ArrayList<Long>();
+        this.myMaps = new ArrayList<Long>();
     }
     
     public User (String username, String password){
-        numberOfExistingUser++;
-        this.id = numberOfExistingUser;
         this.username = username;
         this.password = password;
-        this.sharedToMe = new ArrayList<>();
-        this.myMaps = new ArrayList<>();
+        this.sharedToMe = new ArrayList<Long>();
+        this.myMaps = new ArrayList<Long>();
     }
+    
+    public String toString() {
+    	System.out.println(" _________________________________________ ");
+    	System.out.println("|@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|");
+    	String a = "	> Long id               : "+id.intValue() +"\n";
+    	String b = "	> String username       : "+username      +"\n";
+    	String c = "	> String password       : "+password      +"\n";
 
-    public int getId() {
+    	String sh = "";
+    	if(this.sharedToMe != null) sh = sharedToMe.toString();
+    	else sh =  "	> null";
+    	
+    	String my = "";
+    	if(this.myMaps != null) my = myMaps.toString();
+    	else sh =  "	> null";		
+    	
+    	String d = "	> List<Long> sharedToMe : "+sh +"\n";
+    	String e = "	> List<Long> myMaps     : "+my;
+    	return a+b+c+d+e;
+    }
+    
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
     
@@ -54,20 +79,21 @@ public class User {
         this.password = password;
     }
 
-    public List<Map> getSharedToMe() {
+    public List<Long> getSharedToMe() {
         return sharedToMe;
     }
 
-    public void setSharedToMe(List<Map> sharedToMe) {
+    public void setSharedToMe(List<Long> sharedToMe) {
         this.sharedToMe = sharedToMe;
     }
 
-    public List<Map> getMyMaps() {
+    public List<Long> getMyMaps() {
         return myMaps;
     }
 
-    public void setMyMaps(List<Map> myMaps) {
+    public void setMyMaps(List<Long> myMaps) {
         this.myMaps = myMaps;
     }
+    
     
 }

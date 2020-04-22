@@ -13,9 +13,8 @@ import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 
+
 import ressources.Database;
-
-
 
 public class JettyMain {
 
@@ -56,8 +55,8 @@ public class JettyMain {
 		contexts.setHandlers(new Handler[] { handlerWebServices, handlerPortalCtx });
 		server.setHandler(contexts);
 		
-		//Create Database
-		Database.fillDatabase();
+		//Initialize the database
+		Database.initialise();
 		
 		// Start server
 		server.start();

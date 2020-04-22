@@ -43,7 +43,7 @@ public interface EventDao {
     //add a label to an event
     void addLabel (int user_id, int map_id, int event_id, String label);
     //add a photo to an event
-    void addPhoto (int user_id, int map_id, int event_id, ImageIcon photo);
+    int addPhoto (int user_id, int map_id, int event_id, ImageIcon photo);
     //remove a label
     void removeLabel (int user_id, int map_id, int event_id, String label);
     //remove a photo

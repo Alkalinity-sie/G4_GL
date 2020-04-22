@@ -2,34 +2,30 @@ package couchedepersistance;
 
 import java.time.LocalDateTime;
 
+import javax.jdo.annotations.PersistenceCapable;
+
+@PersistenceCapable(detachable="true")
 public class Event extends Location {
-  
-    private static int numberOfExistingEvent = 0;
-    private int id;
+
     private LocalDateTime beginning;
     private LocalDateTime end;
     
     public Event(){
         super();
-        numberOfExistingEvent++;
-        this.id = numberOfExistingEvent;
     }
 
     public Event(String name, String description, String address, LocalDateTime beginning, LocalDateTime end){
         super(name, description, address);
-        numberOfExistingEvent++;
-        this.id = numberOfExistingEvent;
         this.beginning = beginning;
         this.end = end;
     }
-
     
-    public int getId() {
-        return id;
+    public Long getId() {
+        return super.getId();
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(Long id) {
+        super.setId(id);
     }
     
     public LocalDateTime getBeginning() {

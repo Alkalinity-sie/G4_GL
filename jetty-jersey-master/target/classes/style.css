@@ -153,3 +153,18 @@
     top: 500px;
    
 }
+#mapleflet { 
+    height: 300px;
+    width: 500px; 
+    position: absolute;
+    top : 500px;
+    left: 100px;
+}
+
+#mapleflet1 { 
+    height: 300px;
+    width: 500px; 
+    position: absolute;
+    top : 1000px;
+    left: 100px;
+}

@@ -4,6 +4,10 @@ package ressources;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Transaction;
 import javax.swing.ImageIcon;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -15,13 +19,15 @@ import javax.ws.rs.core.MediaType;
 
 import couchedepersistance.Location;
 import couchedepersistance.LocationDao;
+import couchedepersistance.Map;
 import couchedepersistance.Photo;
+import couchedepersistance.User;
 
 
 @Path("/User/{UserID}/Map/{MapID}/Location/{LocationID}")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class LocationRessource implements LocationDao {
+public class LocationRessource implements LocationDao { 
 	
 	/* GET */
 	
@@ -31,7 +37,7 @@ public class LocationRessource implements LocationDao {
 	public Location getLocation (
 			@PathParam("UserID")  int user_id, 
     		@PathParam("MapID")   int map_id, 
-    		@PathParam("EventID") int location_id) {
+    		@PathParam("EventID") int location_id) { //OK
 		return Database.getLocation(user_id, map_id, location_id);
 	}
 	
@@ -42,9 +48,11 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id) {
+	
 		Location l = Database.getLocation(user_id, map_id, location_id);
 		if(l == null) return "null";
 		return l.getName();
+		
     }
 	
 	@GET
@@ -54,9 +62,15 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id) {
+		/*
 		Location l = Database.getLocation(user_id, map_id, location_id);
 		if(l == null) return "null";
 		return l.getDescription();
+		*/
+		Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return "null";
+		return l.getDescription();
+		
     }
 	
 	@GET
@@ -66,6 +80,11 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id) {
+		/*
+		Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return "null";
+		return l.getAddress();
+		*/
 		Location l = Database.getLocation(user_id, map_id, location_id);
 		if(l == null) return "null";
 		return l.getAddress();
@@ -78,6 +97,11 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id,
     		@PathParam("LocationID") int location_id){
+		/*
+		Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return null;
+		return l.getLabels();
+		*/
 		Location l = Database.getLocation(user_id, map_id, location_id);
 		if(l == null) return null;
 		return l.getLabels();
@@ -90,6 +114,7 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id){
+		/*
 		Location l = Database.getLocation(user_id, map_id, location_id);
 		if(l == null) return null;
 		List<Photo> photos = l.getPhotos();
@@ -98,6 +123,17 @@ public class LocationRessource implements LocationDao {
 			res.add(p.getPhoto());
 		}
 		return res;
+		*/
+		Location l = Database.getLocation(user_id, map_id, location_id);
+		if(l == null) return null;
+		
+		List<ImageIcon> res = new ArrayList<>();
+		for(Long pid : l.getPhotos()){
+			Photo p = Database.getPhoto(user_id, map_id, location_id, pid.intValue());
+			res.add(p.getPhoto());
+		}
+		return res;
+		
     }
 	
 	/* POST */
@@ -109,10 +145,46 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id, 
-    		@PathParam("Name")String name) {
+    		@PathParam("Name")       String name) {
+    	/*
     	Location l = Database.getLocation(user_id, map_id, location_id);
 		if(l == null) return;
 		l.setName(name);
+		*/
+    	
+    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.begin();
+			
+			User u = pm.getObjectById(User.class, user_id);
+			
+			//on regarde si map_id appartient à user_id
+			boolean found = false;
+			for(Long mid : u.getMyMaps()) {
+				if(mid.intValue() == map_id) {
+					found = true;
+				}
+			}
+			
+			if(found == true) {
+				Map m = pm.getObjectById(Map.class, map_id);
+				//on regarde si location_id appartient à map_id
+				for(Long l : m.getMyLocations()) {
+					if(l.intValue() == location_id) {
+						Location loc = pm.getObjectById(Location.class, location_id);
+						loc.setName(name);
+					}
+				}
+			}
+			
+			tx.commit();
+		} finally {
+			if (tx.isActive()) tx.rollback();
+			pm.close();
+			pmf.close();
+		}
     }
     
     @POST
@@ -123,9 +195,45 @@ public class LocationRessource implements LocationDao {
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id, 
     		@PathParam("Description") String description) {
+    	/*
     	Location l = Database.getLocation(user_id, map_id, location_id);
 		if(l == null) return;
 		l.setDescription(description);
+		*/
+    	
+    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.begin();
+			
+			User u = pm.getObjectById(User.class, user_id);
+			
+			//on regarde si map_id appartient à user_id
+			boolean found = false;
+			for(Long mid : u.getMyMaps()) {
+				if(mid.intValue() == map_id) {
+					found = true;
+				}
+			}
+			
+			if(found == true) {
+				Map m = pm.getObjectById(Map.class, map_id);
+				//on regarde si location_id appartient à map_id
+				for(Long l : m.getMyLocations()) {
+					if(l.intValue() == location_id) {
+						Location loc = pm.getObjectById(Location.class, location_id);
+						loc.setDescription(description);
+					}
+				}
+			}
+			
+			tx.commit();
+		} finally {
+			if (tx.isActive()) tx.rollback();
+			pm.close();
+			pmf.close();
+		}
     }
     
     @POST
@@ -136,9 +244,45 @@ public class LocationRessource implements LocationDao {
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id, 
     		@PathParam("Address") String address) {
+    	/*
     	Location l = Database.getLocation(user_id, map_id, location_id);
 		if(l == null) return;
 		l.setaddress(address);
+    	 */
+    	
+    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.begin();
+			
+			User u = pm.getObjectById(User.class, user_id);
+			
+			//on regarde si map_id appartient à user_id
+			boolean found = false;
+			for(Long mid : u.getMyMaps()) {
+				if(mid.intValue() == map_id) {
+					found = true;
+				}
+			}
+			
+			if(found == true) {
+				Map m = pm.getObjectById(Map.class, map_id);
+				//on regarde si location_id appartient à map_id
+				for(Long l : m.getMyLocations()) {
+					if(l.intValue() == location_id) {
+						Location loc = pm.getObjectById(Location.class, location_id);
+						loc.setAddress(address);
+					}
+				}
+			}
+			
+			tx.commit();
+		} finally {
+			if (tx.isActive()) tx.rollback();
+			pm.close();
+			pmf.close();
+		}
     }
     
     @POST
@@ -148,23 +292,104 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id, 
-    		@PathParam("Label") String label) {
+    		@PathParam("Label")      String label) {
+    	/*
     	Location l = Database.getLocation(user_id, map_id, location_id);
 		if(l == null) return;
 		l.getLabels().add(label);
+		*/
+    	
+    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.begin();
+			
+			User u = pm.getObjectById(User.class, user_id);
+			
+			//on regarde si map_id appartient à user_id
+			boolean found = false;
+			for(Long mid : u.getMyMaps()) {
+				if(mid.intValue() == map_id) {
+					found = true;
+				}
+			}
+			
+			if(found == true) {
+				Map m = pm.getObjectById(Map.class, map_id);
+				//on regarde si location_id appartient à map_id
+				for(Long l : m.getMyLocations()) {
+					if(l.intValue() == location_id) {
+						Location loc = pm.getObjectById(Location.class, location_id);
+						loc.getLabels().add(label);
+					}
+				}
+			}
+			
+			tx.commit();
+		} finally {
+			if (tx.isActive()) tx.rollback();
+			pm.close();
+			pmf.close();
+		}
+
     }
     
     @POST
     @Path("addPhoto/{Photo}")
     //add a photo to a location
-    public void addPhoto (
+    public int addPhoto (
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id, 
     		@PathParam("Photo")      ImageIcon photo) {
+    	/*
     	Location l = Database.getLocation(user_id, map_id, location_id);
-		if(l == null) return;
-		l.getPhotos().add(new Photo(photo));
+		if(l == null) return -1;
+		
+		Photo p =new Photo(photo);
+		l.getPhotos().add(p);
+    	return p.getId();
+    	*/
+    	int id = -1;
+    	
+    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.begin();
+			
+			User u = pm.getObjectById(User.class, user_id);
+			
+			//on regarde si map_id appartient à user_id
+			boolean found = false;
+			for(Long mid : u.getMyMaps()) {
+				if(mid.intValue() == map_id) {
+					found = true;
+				}
+			}
+			
+			if(found == true) {
+				Map m = pm.getObjectById(Map.class, map_id);
+				//on regarde si location_id appartient à map_id
+				for(Long l : m.getMyLocations()) {
+					if(l.intValue() == location_id) {
+						Location loc = pm.getObjectById(Location.class, location_id);
+						Photo nouvelle = pm.makePersistent(new Photo());
+						id = nouvelle.getId().intValue();
+						loc.getPhotos().add(new Long(id));
+					}
+				}
+			}
+			tx.commit();
+		} finally {
+			if (tx.isActive()) tx.rollback();
+			pm.close();
+			pmf.close();
+		}
+    	
+    	return id;
+    	
     }
     
     @POST
@@ -175,9 +400,45 @@ public class LocationRessource implements LocationDao {
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id, 
     		@PathParam("Label")      String label) {
+    	/*
     	Location l = Database.getLocation(user_id, map_id, location_id);
 		if(l == null) return;
 		l.getLabels().remove(label);
+		*/
+    	
+    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.begin();
+			
+User u = pm.getObjectById(User.class, user_id);
+			
+			//on regarde si map_id appartient à user_id
+			boolean found = false;
+			for(Long mid : u.getMyMaps()) {
+				if(mid.intValue() == map_id) {
+					found = true;
+				}
+			}
+			
+			if(found == true) {
+				Map m = pm.getObjectById(Map.class, map_id);
+				//on regarde si location_id appartient à map_id
+				for(Long l : m.getMyLocations()) {
+					if(l.intValue() == location_id) {
+						Location loc = pm.getObjectById(Location.class, location_id);
+						loc.getLabels().remove(label);
+					}
+				}
+			}
+			
+			tx.commit();
+		} finally {
+			if (tx.isActive()) tx.rollback();
+			pm.close();
+			pmf.close();
+		}
     }
     
     @POST
@@ -188,6 +449,7 @@ public class LocationRessource implements LocationDao {
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id,
     		@PathParam("PhotoID")    int photo_id) {
+    	/*
     	Location l = Database.getLocation(user_id, map_id, location_id);
 		if(l == null) return;
 		List<Photo> photos = l.getPhotos();
@@ -195,6 +457,46 @@ public class LocationRessource implements LocationDao {
 			if(p.getId()==photo_id) {
 				photos.remove(p);
 			}
+		}
+		*/
+    	
+    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.begin();
+			
+			User u = pm.getObjectById(User.class, user_id);
+			
+			//on regarde si map_id appartient à user_id
+			boolean found = false;
+			for(Long mid : u.getMyMaps()) {
+				if(mid.intValue() == map_id) {
+					found = true;
+				}
+			}
+			
+			if(found == true) {
+				Map m = pm.getObjectById(Map.class, map_id);
+				//on regarde si location_id appartient à map_id
+				for(Long l : m.getMyLocations()) {
+					if(l.intValue() == location_id) {
+						Location loc = pm.getObjectById(Location.class, location_id);
+						for(Long pid : loc.getPhotos()) {
+							if(pid.intValue() == photo_id) {
+								loc.getPhotos().remove(pid);
+								break;
+							}
+						}
+					}
+				}
+			}
+			
+			tx.commit();
+		} finally {
+			if (tx.isActive()) tx.rollback();
+			pm.close();
+			pmf.close();
 		}
     }
     
