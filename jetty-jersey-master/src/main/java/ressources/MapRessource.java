@@ -57,11 +57,17 @@ public class MapRessource implements MapDao {
     	return m.getName();
     	*/
 		User u = Database.getUser(user_id);
-		if(u == null) return null;
+		if(u == null) {
+			System.out.println("Map ressource - getName : null");
+			return null;
+		}
 		
-		if(u.getMyMaps().contains(new Long(map_id)) || u.getSharedToMe().contains(new Long(map_id))) 
-			return Database.getMap(user_id, map_id).getName();
-	
+		if(u.getMyMaps().contains(new Long(map_id)) || u.getSharedToMe().contains(new Long(map_id))) {
+			String name = Database.getMap(user_id, map_id).getName();
+			System.out.println("Map ressource - getName : "+name);
+			return name;
+		}
+		System.out.println("Map ressource - getName : null");
 		return "null";
     }
 	
@@ -77,11 +83,17 @@ public class MapRessource implements MapDao {
     	return m.getDescription();
     	*/
 		User u = Database.getUser(user_id);
-		if(u == null) return null;
+		if(u == null) {
+			System.out.println("Map ressource - getName : null");
+			return null;
+		}
 		
-		if(u.getMyMaps().contains(new Long(map_id)) || u.getSharedToMe().contains(new Long(map_id))) 
-			return Database.getMap(user_id, map_id).getDescription();
-	
+		if(u.getMyMaps().contains(new Long(map_id)) || u.getSharedToMe().contains(new Long(map_id))) {
+			String description = Database.getMap(user_id, map_id).getDescription();
+			System.out.println("Map ressource - getName : "+description);
+			return description;
+		}
+		System.out.println("Map ressource - getName : null");
 		return "null";
     }
 	
@@ -113,14 +125,6 @@ public class MapRessource implements MapDao {
 	@Path("/getLocations")
     //retrieval of map's list of locations
     public List<Location> getLocations (@PathParam("UserID") int user_id, @PathParam("MapID") int map_id){ //OK
-		/*
-		Map m = getMap(user_id, map_id);
-    	if(m==null) {//si map n'existe pas du tout, ni en tant que partagé ni en tant que map perso
-    		return null;
-    	}
-    	return m.getMyLocations();
-    	*/
-		
 		User u = Database.getUser(user_id);
 		if(u == null) return null;
 		
@@ -367,7 +371,7 @@ public class MapRessource implements MapDao {
 				Location l = new Location();
 				Location loc = pm.makePersistent(l);
 				id = loc.getId();
-				m.getMyLocations().add(id); //FAUT IL FAIRE MAKEPERSISTENT ?
+				m.getMyLocations().add(id);
 				
 				tx.commit();
 			} finally {
@@ -434,7 +438,7 @@ public class MapRessource implements MapDao {
 		if(l==null) return;
 		m.getMyLocations().remove(l);
 		*/
-		
+		System.out.println("removeLocation");
 		PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
 		PersistenceManager pm = pmf.getPersistenceManager();
 		Transaction tx = pm.currentTransaction();
@@ -469,7 +473,7 @@ public class MapRessource implements MapDao {
 		if(e==null) return;
 		m.getMyLocations().remove(e);
 		*/
-		
+		System.out.println("removeEvent");
 		PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
 		PersistenceManager pm = pmf.getPersistenceManager();
 		Transaction tx = pm.currentTransaction();

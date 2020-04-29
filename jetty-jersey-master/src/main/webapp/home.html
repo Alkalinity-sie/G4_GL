@@ -1,47 +1,172 @@
- <!DOCTYPE html>
+  
+<!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+
 	<body>
-		<a href="User.html">User Page</a>
-		<a href="lef.html">Map test</a>
 		
-		<script id="templateEvent" type="text/template">
-			<div>
-				<%= attribut %>
-			</div>
-		</script>
-		
-		<script id="templateDateTime" type="text/template">
-			<p>
-				<%= attribut %>: <%= dayOfMonth %>  <%= month %> <%= year %> .hour:   <%= hour %> : <%= minute %>
-			</p>
-		</script>
-		<link rel="stylesheet" type="text/css" href="style.css">
-		<div id="Event">
-			<h2>Event</h2>
-			<div id = "EventBeginning"></div>
-			<button id = "SetEventbeginning">Set Eventbegin</button>
-			<input type="LocalDateTime" name="setEventBeginning">
-			<div id = "EventEnd"></div>
-			<button id = "SetEventend">Set Eventend</button>
-			<input type="LocalDateTime" name="setEventEnd">
-			<div id = "EventName"></div>
-			<button id = "SetEventname">Set Eventname</button>
-			<input type="text" name="setEventName">
-			<div id = "EventDescription"></div>
-			<button id = "SetEventdescription">Set Eventdescription</button>
-			<input type="text" name="setEventDescription">
-			<div id = "EventAddress"></div>
-			<button id = "SetEventaddress">Set Eventadress</button>
-			<input type="text" name="setEventAddress">
-			<div id = "EventLabels"></div>
-			<button id = "SetEventlabels">Set Eventlabels</button>
-			<input type="text" name="setEventLabels">
-			<div id = "EventPhotos"></div>
-		</div>
-		
-		<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
-	    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-		<script type="text/javascript" src="event.js"></script>
+    <!------------------------------------------------------------------------------------------------------------------------------------------->
+    <!---------------------------------------------------------   PARTIE CONTENU ---------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------------------------------------------------------------->
+
+    <!-- ON PLACE LA MAP ICI -->
+		<div id="mapleflet1"></div>
+
+    <!-- fenetre info -->
+    <div class="bg-modal">
+      <div class="modal-content">
+          <div class="close" onclick="fermerFenetreMapInfo()">+</div>
+          <div class="infoCarte" style="font-size:20px;">Informations sur la carte</div><br/>
+          <img class="mapPng" src="map.png" alt=""><br/><br/>
+          Nom <br/> 
+          <input id="nomMap" style="width: 300px;"><br/><br/>
+          Description <br/>
+          <textarea id="descriptionMap" style="resize: none; width: 300px; height: 60px; border:1px solid #C2C6C9;"></textarea><br/><br/>
+          Partager à un utilisateur <br/>     
+          <input id="shareWith" style="width: 200px;" placeholder="Nom">
+          <button class="partagerLaCarteButton" onclick="partagerLaCarte()">Partager</button><br/>
+          <br/>
+            Statut<br/>
+            <label class="switch">
+              <input id="statutMap" type="checkbox" onclick="changeStatut()">
+              <span class="slider round"></span>
+            </label>
+          <br/>
+          <div class="statut">Private</div>
+          <br/> <br/>
+          <button class="enregistrerDataCarteButton" onclick="enregistrerDataCarte()">Enregistrer</button>
+          <button class="supprimerLaCarteButton" onclick="supprimerLaCarte()">Supprimer la carte</button><br/>
+      </div>
+    </div>
+
+    <!-- BARRE DE RECHERCHE -->
+    <div class="topnav">
+      <input id="mapSearchBar" type="text" placeholder="Rechercher de nouvelles cartes...">
+      <button id="buttonNouvelleCarte" onclick="ouvreNouvelleCarte()">Nouvelle carte</button>
+    </div>
+
+    <button id="buttonRechercher">Rechercher</button>
+    <button class="deconnection">Se deconnecter</button>
+    <!-- INFO BUTTON -->
+    <a class="info" onclick="afficheFenetreMapInfo()" data-toggle="popover">Info</a>
+
+    <!--  SCROLL -->
+    <a id="remonter" href="#mapleflet1">Remonter</a>
+
+    <!-- SIDEBAR -->
+    <input type="checkbox" id="check">
+    <label for="check">
+        <i id="btn">///</i>
+        <i id="cancel">x</i>
+    </label>
+
+    <div class="sidebar">
+      <header>Mes cartes</header>
+      <ul>
+        <li><a href="#" onclick="getCartesPerso()"><i></i>Mes cartes</a></li>
+        <li><a href="#" onclick="getCartesParta()"><i></i>Cartes partagées</a></li>
+        <div id="liste-des-cartes"></div>
+      </ul>
+      
+    </div>
+
+    <!-- liste des cartes -->
+    <div class="center-liste"></div>
+
+    <script id="templateMapElement" type="text/template">
+      <div class="map-element indice<%= indice %>">
+        <img class="text map-img" src="map.png" alt="">
+        <div class="text map-proprietaire">Propriétaire : <%= proprietaire %></div>
+        <div class="text map-nom">Nom : <%= nom %></div>
+        <div class="text map-description">Description : <%= description %></div>
+        <div class="text map-labels">
+          <div class="text label"></div>
+          <div class="text label"></div>
+          <div class="text label"></div>
+          <div class="text label"></div>
+          <div class="text label"></div>
+          <div class="text label"></div>
+          <div class="text label"></div>
+          <div class="text label"></div>
+          <div class="text label"></div>
+          <div class="text label"></div>
+          <div class="text label"></div>
+        </div>
+      </div>
+    </script>
+    <script id="templatePopup" type="text/template">
+      <div id="popup">
+          <div id="mID" data-value="<%=mID%>"></div>
+          <div style="text-align:center; font-weight: bold;"> 
+            Lieu / Évènement
+          </div><br/>
+          <button id="saveButton" onclick="<%=code%>">Enregistrer</button>
+          <button id="supprimerButton" onclick="supprimerLocation(<%=markerID%>)">Supprimer</button><br/></br>
+          Nom <br/>      
+          <input id="nom" style="width: 171px;" value='<%=nom%>'><br/>
+          Adresse <br/>      
+          <input id="adresse" style="width: 171px;" value='<%=adresse%>'><br/>
+          Description <br/>
+          <textarea id="description" style="resize: none; width: 173px; height: 60px; border:1px solid #C2C6C9;"><%=description%></textarea><br/>
+          Labels <br/>      
+          <input id="labels" style="width: 171px;"><br/>
+          Photos <br/>    
+          <input id="photos" style="width: 171px;"><br/>
+          <br/>
+          <b>Evenement &emsp;</b> 
+          <!-- SWITCH -->
+          <label class="switch">
+            <input type="checkbox" onclick="EnableDisableEvent()">
+            <span class="slider round"></span>
+          </label>
+          <br/> 
+          <!-- FIN SWITCH -->
+          <div style="visibility:hidden;" id="Evenement-infos">
+            <div id="debutText" type = "hidden"> Debut </div>
+            <input id="debutInput" type="datetime-local" ><br/> 
+            <div id="finText"> Fin </div>
+            <input id="finInput" type="datetime-local" ><br/> 
+          </div>
+      </div>
+    </script>
+
+    <!------------------------------------------------------------------------------------------------------------------------------------------->
+    <!---------------------------------------------------------   PARTIE RESSOURCES ------------------------------------------------------------->
+    <!------------------------------------------------------------------------------------------------------------------------------------------->
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+      integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+      crossorigin=""></script>
+      <!-- Esri pour la recherche de lieux-->
+    <script src="https://unpkg.com/esri-leaflet@2.3.3/dist/esri-leaflet.js"
+      integrity="sha512-cMQ5e58BDuu1pr9BQ/eGRn6HaR6Olh0ofcHFWe5XesdCITVuSBiBZZbhCijBe5ya238f/zMMRYIMIIg1jxv4sQ=="
+      crossorigin=""></script>
+      
+    <script src="https://unpkg.com/esri-leaflet-geocoder@2.3.2/dist/esri-leaflet-geocoder.js"
+      integrity="sha512-8twnXcrOGP3WfMvjB0jS5pNigFuIWj4ALwWEgxhZ+mxvjF5/FBPVd5uAxqT8dd2kUmTVK9+yQJ4CmTmSg/sXAQ=="
+      crossorigin=""></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin=""/>
+
+    <!-- Geocoding  -->
+    <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.3.2/dist/esri-leaflet-geocoder.css"
+      integrity="sha512-IM3Hs+feyi40yZhDH6kV8vQMg4Fh20s9OzInIIAc4nx7aMYMfo+IenRUekoYsHZqGkREUgx0VvlEsgm7nCDW9g=="
+      crossorigin="">
+
+    <!---------- MONJS  ---------->        <script type="text/javascript" src="MONJS.js"></script>
+    <!---------- recherche.js  ---------- <script type="text/javascript" src="recherche.js"></script> -->
+    <!---------- liste.js  ---------->     <script type="text/javascript" src="liste.js"></script>
+    <!---------- MONCSS ---------->        <link rel="stylesheet" type="text/css" href="MONCSS.css">
+    <!---------- recherche.css ---------- <link rel="stylesheet" type="text/css" href="recherche.css"> -->
+    <!---------- liste.css ---------->     <link rel="stylesheet" type="text/css" href="liste.css">
 
 	</body>
-</html>
+  </html>

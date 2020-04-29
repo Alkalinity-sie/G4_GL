@@ -48,8 +48,8 @@ public class Map {
     
     
     public Map(){
-        this.name = "";
-        this.description = "";
+        this.name = "Sans nom";
+        this.description = "Sans description";
         this.status = false;
         this.myLocations = new ArrayList<>();
         this.myEvents = new ArrayList<>();

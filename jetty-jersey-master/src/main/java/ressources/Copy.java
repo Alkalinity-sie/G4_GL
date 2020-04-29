@@ -32,6 +32,10 @@ public class Copy {
 		return copy;
 	}
 	
+	public static String intToProperString(int n) {
+		return (n<10)?("0"+n):(""+n);
+	}
+	
 	/**
 	 * Retourne une copie profonde d'un evenement
 	 * @param e Un evenement
@@ -45,22 +49,22 @@ public class Copy {
 		copy.setId(id);
 		
 		// copie du champ : LocalDateTime beginning
-		int Byear = e.getBeginning().getYear();
-		int Bmonth = e.getBeginning().getMonthValue();
-		int BdayOfMonth = e.getBeginning().getDayOfMonth();
-		int Bhour = e.getBeginning().getHour();
-		int Bminute = e.getBeginning().getMinute();
+		String Byear = intToProperString(e.getBeginning().getYear());
+		String Bmonth = intToProperString(e.getBeginning().getMonthValue());
+		String BdayOfMonth = intToProperString(e.getBeginning().getDayOfMonth());
+		String Bhour = intToProperString(e.getBeginning().getHour());
+		String Bminute = intToProperString(e.getBeginning().getMinute());
 		String Bchaine = ""+Byear+"-"+Bmonth+"-"+BdayOfMonth+"T"+Bhour+":"+Bminute+":"+"00.000"; 
 			//exemple : "2020-10-06T17:00:00.000"
 		LocalDateTime beginning = LocalDateTime.parse(Bchaine);
 		copy.setBeginning(beginning);
 		
 		// copie du champ : LocalDateTime end
-		int Eyear = e.getBeginning().getYear();
-		int Emonth = e.getBeginning().getMonthValue();
-		int EdayOfMonth = e.getBeginning().getDayOfMonth();
-		int Ehour = e.getBeginning().getHour();
-		int Eminute = e.getBeginning().getMinute();
+		String Eyear = intToProperString(e.getBeginning().getYear());
+		String Emonth = intToProperString(e.getBeginning().getMonthValue());
+		String EdayOfMonth = intToProperString(e.getBeginning().getDayOfMonth());
+		String Ehour = intToProperString(e.getBeginning().getHour());
+		String Eminute = intToProperString(e.getBeginning().getMinute());
 		String Echaine = ""+Eyear+"-"+Emonth+"-"+EdayOfMonth+"T"+Ehour+":"+Eminute+":"+"00.000"; 
 		LocalDateTime end = LocalDateTime.parse(Echaine);
 		copy.setBeginning(end);

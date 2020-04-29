@@ -12,6 +12,8 @@ public class Event extends Location {
     
     public Event(){
         super();
+        this.beginning = LocalDateTime.now();
+        this.end = LocalDateTime.now();
     }
 
     public Event(String name, String description, String address, LocalDateTime beginning, LocalDateTime end){

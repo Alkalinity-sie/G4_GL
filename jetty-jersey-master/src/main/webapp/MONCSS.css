@@ -1,0 +1,380 @@
+#mapleflet1 { 
+    height: 94vh; /* For 100% screen height */
+    width:  100vw; /* For 100% screen width */
+    position: absolute;
+    top : 0vh;
+    left: 0px; /* cetait 0px avant sidebar*/
+}
+
+#mapSearchBar { 
+    height: 4.2vh; 
+    width:  50vw;
+    position: absolute;
+    top : 94.5vh;
+    left: 20vw;
+}
+
+#buttonRechercher {
+	  height: 4.8vh; 
+    width:  8vw;
+    position: absolute;
+    top : 94.5vh;
+    left: 71vw;
+    font-size: 0.85em;
+}
+
+#buttonNouvelleCarte {
+    height: 4.8vh; 
+    width:  10vw;
+    position: absolute;
+    top : 94.5vh;
+    left: 1vw;
+    font-size: 0.85em;
+}
+
+.deconnection {
+    height: 4.8vh; 
+    width:  10vw;
+    position: absolute;
+    top : 94.5vh;
+    left: 89vw;
+    font-size: 0.85em;
+}
+
+::placeholder {
+  font-size: 1.3em;
+}
+
+#remonter {
+    position: absolute;
+    top : 200vh;
+    left: 10vw;
+    color: white;
+}
+
+/*---------------
+ INFOBUTTON 
+ ---------------*/
+body {
+  background: #063146;
+}
+
+.info {
+  vertical-align: bottom;
+  position: absolute;
+  width: 1.5em;
+  height: 1.5em;
+  top : 95.3vh;
+  left: 82.7vw;
+  text-indent: -9999em;
+  display: inline-block;
+  color: white;
+  font-weight:bold;
+  font-size:1em;
+  line-height:1em;
+  background-color: #628cb6;
+  margin-left: .25em;
+  -webkit-border-radius:1em;
+  -moz-border-radius:1em;
+  border-radius:1em;
+}
+.info:hover {
+  cursor: pointer;
+}
+.info:before {
+  content:"?";
+  position: absolute;
+  top: .25em;
+  left: 0;
+  text-indent: 0;
+  display:block;
+  width:1.5em;
+  text-align:center;
+}
+
+/*-----------------------------------------
+ SIDEBAR
+ ----------------------------------------- */
+body {
+  font-family: 'Roboto', sans-sherif;
+}
+
+*{ /*selectionne toutes les balises */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-decoration: none;
+}
+
+.sidebar{ /* LE SIDEBAR ¨/
+  z-index:2000; /*z-index règle le niveau de proximité, + il est élevé + l'objet en question sera en premier plan */
+  position: fixed;
+  top: 0px;
+  left: -400px;
+  width: 400px;
+  height: 100%;
+  background: #042331;
+  transition: all .5s ease;
+}
+
+.sidebar header{ /* Le titre : Mes Cartes */;
+  z-index:2000;
+  font-size: 22px;
+  color: white;
+  text-align: center;
+  line-height: 70px;
+  background: #063146;
+  user-select: none;
+}
+
+.sidebar ul a{ /* Cartes Personnelles et Cartes partagées */
+  z-index:2000;
+  display: block;
+  height: 100%;
+  width: 100%;
+  line-height: 25px;
+  font-size: 20px;
+  color: white;
+  padding-left: 40px;
+  box-sizing: border-box;
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  border-bottom: 1px solid black;
+  transition: .4s;
+}
+
+ul li:hover a{ /* hover : l'apparence des li lorsqu'on les survole (hover) */
+  z-index:2000;
+  padding-left: 50px;
+}
+
+#check{
+  z-index:2000;
+  display: none;
+}
+
+label #btn, label #cancel{
+  z-index:2000;
+  position: absolute;
+  cursor: pointer;
+  background: #042331;
+  border-radius: 3px;
+}
+
+label #btn{
+  z-index:2000;
+  left: 6vh;
+  top: 1.7vh;
+  font-size: 35px;
+  color: white;
+  padding: 6px 12px;
+  transition: all .5s;
+}
+
+label #cancel{
+  z-index:2100;
+  left: -195px;
+  top: 17px;
+  font-size: 30px;
+  color: #0a5275;
+  padding: 4px 9px;
+  transition: all .5s ease;
+}
+
+#check:checked ~ .sidebar{
+  z-index:2000;
+  left: 0;
+}
+
+#check:checked ~ label #btn{
+  z-index:2000;
+  left: 250px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#check:checked ~ label #cancel{
+  z-index:2100;
+  left: 345px;
+}
+
+
+#vide {
+  left: 0px;
+  width: 400px;
+  height: 20px;
+  background: #063146;
+}
+
+#liste-des-cartes {
+  left: 0px;
+  width: 400px;
+  word-wrap: break-word;
+  font-size: 12px;
+  color: white;
+  background: #042331;
+}
+/*-----
+ POPUP 
+ ----------------*/
+#popup {
+  height:325px; /* 250px avant*/
+  width: 176px;
+}
+
+/* TOGGLE BUTTON EVENT */
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 35px;
+  height: 17px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before { /* la boule */
+  position: absolute;
+  content: "";
+  height: 15px; /*13px */
+  width: 14px;  /* 12px */
+  top: 1px;
+  left: 1px;
+  bottom: 1px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(19px);
+  -ms-transform: translateX(19px);
+  transform: translateX(19px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/** SAVE BUTTON */
+#saveButton{
+  position: relative;
+  left: 5%;
+  height: 25px;
+  width: 40%;
+  font-size: 12px;
+}
+
+#supprimerButton {
+  position: relative;
+  left: 15%;
+  height: 25px;
+  width: 40%;
+  font-size: 12px;
+}
+
+/*----------------------------- 
+FENETRE INFO
+----------------------------- */
+
+.bg-modal {
+  z-index: 2000;
+  background-color: rgba(0, 0, 0, 0);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  position: relative;
+  width: 400px;
+  height: 500px;
+  background-color: white;
+  border-radius: 30px; /* arrondit les bords */
+  text-align: center; /* tous les éléments à l'intérieur du div vont être alignés horizontalement */
+  padding: 20px; /* crée un vide aux quatres côtés du div mais à l'intérieur (contrairement à 'margin' qui le fait à l'extérieur) */
+  position: relative;
+}
+
+.mapPng {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.partagerLaCarteButton {
+  position: relative;
+  left: 20px;
+  height: 20px;
+  width: 20%;
+  font-size: 12px;
+}
+
+.enregistrerDataCarteButton{
+  position: relative;
+  height: 25px;
+  width: 30%;
+  font-size: 12px;
+}
+
+.supprimerLaCarteButton {
+  position: relative;
+  height: 25px;
+  width: 30%;
+  font-size: 12px;
+}
+
+.close {
+  position: absolute; /* va être absolu par rapport à modal-content (qui, lui est relatif) donc va se positionner par rapport à la fenetre modal content*/
+  top: 0;
+  right: 10px;
+  font-size: 42px;
+  transform: rotate(45deg);
+  cursor: pointer; /* quand le curseur est sur la croix, le curseur se transforme en pointeur (une main) */
+  color: #333;
+  &:hover {
+    color: #666;
+  }
+}
+
+
+
+
+
+
+

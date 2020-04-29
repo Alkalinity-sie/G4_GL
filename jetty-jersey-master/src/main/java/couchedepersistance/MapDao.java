@@ -6,6 +6,8 @@ public interface MapDao {
 	
 	/* GET */
 	
+	//get all events of a map
+	List<Event> getEvents (int user_id, int map_id);
 	//get a map
 	Map getMap (int user_id, int map_id);
     //retrieval of a map's name

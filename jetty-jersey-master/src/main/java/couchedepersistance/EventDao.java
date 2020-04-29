@@ -9,7 +9,7 @@ import javax.swing.ImageIcon;
 public interface EventDao {
 	
 	/* GET */
-	
+
 	//get an event
 	Event getEvent (int user_id, int map_id, int event_id);
     //retrieval of the date and hour of begginning of an event

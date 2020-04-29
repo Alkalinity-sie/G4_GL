@@ -131,7 +131,9 @@ public class EventRessource implements EventDao {
 			*/
 			Event e = Database.getEvent(user_id, map_id, event_id);
 			if(e == null) return "null";
-			return e.getAddress();
+			String adresse = e.getAddress();
+			System.out.println("EventRessource.java - getAddress : "+adresse);
+			return adresse;
 	    }
 		
 		@GET
@@ -295,6 +297,7 @@ public class EventRessource implements EventDao {
 			if(e == null) return;
 			e.setName(name);
 			*/
+	    	System.out.println("setName");
 	    	
 	    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
 			PersistenceManager pm = pmf.getPersistenceManager();

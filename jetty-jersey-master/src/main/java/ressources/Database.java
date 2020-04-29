@@ -65,26 +65,26 @@ public class Database {
 		Map pierreMap1 = new Map("Parcs ","Carte des parcs", false);     
 		
 		//lieux et évènement de l'utilisateur Jean
-		Location otacos = new Location("O'Tacos", "Best tacos ever", "184 Avenue de Choisy, 75013 Paris");
+		//Location otacos = new Location("O'Tacos", "Best tacos ever", "184 Avenue de Choisy, 75013 Paris");
 		Event manifestation = new Event(
 				"Manif des GJ","Manifestation à Paris des Gilets jaunes",
-				"121 Av. des Champs-Élysées, 75008 Paris",
+				"121 Av. des Champs-Élysées, 75008 Paris*48.872283508801225*2.298449277877808",
 				LocalDateTime.parse("2020-10-06T17:00:00.000"), 
 				LocalDateTime.parse("2020-10-06T19:00:00.000"));
 		
 		
 		//lieux et évènement de l'utilisateur Pierre
-		Location jardinAP = new Location(
+		/*Location jardinAP = new Location(
 				"Jardins Abbé-Pierre - Grands-Moulins", 
-				"Beau jardin", "15 Rue Thomas Mann, 75013 Paris");
+				"Beau jardin", "15 Rue Thomas Mann, 75013 Paris");*/
 		Event anniversaire = new Event(
 						"Mon anniversaire","Je vais fêter mon anniversaire le 22 juin à l'université",
-						"5 Rue Thomas Mann, 75013 Paris",
+						"5 Rue Thomas Mann, 75013 Paris*48.82928545763674*2.3816299438476567",
 						LocalDateTime.parse("2020-06-10T00:00:00.000"), 
 						LocalDateTime.parse("2020-06-10T23:50:00.000"));
 		
-		Long otacosId = addData(otacos, 'L');
-		Long jardinAPId = addData(jardinAP, 'L');
+		//Long otacosId = addData(otacos, 'L');
+		//Long jardinAPId = addData(jardinAP, 'L');
 		
 		Long manifestationId = addData(manifestation, 'E');
 		Long anniversaireId = addData(anniversaire, 'E');
@@ -103,14 +103,17 @@ public class Database {
 			
 			User j = pm.getObjectById(User.class, jeanID);
 			j.getMyMaps().add(jeanMap1Id);
+			j.getMyMaps().add(pierreMap1Id);
+			j.getSharedToMe().add(pierreMap1Id);
 			Map mj = pm.getObjectById(Map.class, jeanMap1Id);
-			mj.getMyLocations().add(otacosId);
+			//mj.getMyLocations().add(otacosId);
 			mj.getMyEvents().add(manifestationId);
+			mj.getMyEvents().add(anniversaireId);
 			
 			User p = pm.getObjectById(User.class, pierreID);
 			p.getMyMaps().add(pierreMap1Id);
 			Map mp = pm.getObjectById(Map.class, pierreMap1Id);
-			mp.getMyLocations().add(jardinAPId);
+			//mp.getMyLocations().add(jardinAPId);
 			mp.getMyEvents().add(anniversaireId);
 			
 			

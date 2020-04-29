@@ -1,0 +1,51 @@
+.center-pagination { /* pour centrer la pagination, on le met dans un div parent (ici c'est 'center') puis dans ce dernier on met 'text-align: center' */
+	position: absolute;
+	top: 195vh;
+	left: 35%;
+}
+
+.pagination a {
+	color: white;
+	float: left;
+	padding: 4px 10px;
+	text-decoration: none;
+	transition: background-color .3s;
+	border: 1px solid grey;
+	margin: 0 4px;
+	border-radius: 4px;
+}
+
+.pagination a.active {
+	color: white;
+	background-color: #4CAF50; /* vert */
+	border: 1px solid #4CAF50;
+}
+
+.pagination a:hover:not(.active) { 
+	background-color: black;
+}
+
+/* :hover spécifie permet de spécifier l'apparence d'un élément au moment où l'utilisateur le survole avec le pointeur 
+:not(p) Sélectionne n'importe quel élément qui n'est pas un paragraphe
+*/
+
+/*
+
+<!-- pagination -->
+    <div class="center-pagination">
+      <div class="pagination">
+        <a href="#" id="previous">&laquo;</a>
+        <a href="#" id="1" class="active">1</a>
+        <a href="#" id="2">2</a>
+        <a href="#" id="3">3</a>
+        <a href="#" id="4">4</a>
+        <a href="#" id="5">5</a>
+        <a href="#" id="6">6</a>
+        <a href="#" id="7">7</a>
+        <a href="#" id="8">8</a>
+        <a href="#" id="9">9</a>
+        <a href="#" id="next">&raquo;</a>
+      </div>
+    </div>
+
+*/
