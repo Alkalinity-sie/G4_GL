@@ -1,0 +1,98 @@
+.center-liste {
+	position: absolute;
+	display: block;
+	top: 105vh;
+	left: 1vw;
+	width: 98vw;
+	height: 90vh;
+	border: 1px solid black;
+	/*border-radius: 20px;*/
+	background-color: #1C1D1E;/*#262728;*//*#30363B;*/
+	overflow: auto; /* met un scrollbar qui devient visible quand il y'a trop d'éléments dans la div */
+}
+
+.map-element {
+	position: relative;
+	margin-top: 1%;
+	left: 1%;
+	width: 98%;
+	height: 15%;
+	border: 1px solid black;
+	/*border-radius: 15px;*/
+	background-color: #2D3136;/*#646769;*/
+	transition: background-color .3s;
+	cursor: pointer;
+}
+
+.map-element:hover {
+	background-color: #646769; /*#A1A4A7;*/
+}
+
+.map-img {
+	position: relative;
+	top: 2%;
+	left: 0.6%;
+	width: 7%;
+	height: 96%;
+}
+
+.text {
+	font-size: 15px;
+	font-family: 'Roboto', sans-sherif;
+	text-align: center; /* alignement horizontal */
+	vertical-align: middle; /*alignement vertical */
+	font-weight: 300; /* epaisseur du trait : 400 etant en mode normal */;
+	overflow: auto;
+	color: white;
+}
+
+.map-proprietaire {
+	position: absolute;
+	top: 5%;
+	left: 69%;
+	width: 30%;
+	height: 18%;
+	border: 1px solid black;
+	/*border-radius: 5px;*/
+	background-color: #2D3136;
+}
+
+.map-nom {
+	position: absolute;
+	top: 5%;
+	left: 20%;
+	width: 30%;
+	height: 18%;
+	border: 1px solid black;
+	/*border-radius: 5px;*/
+	background-color: #2D3136;
+}
+
+.map-description {
+	position: absolute;
+	top: 30%;
+	left: 8.3%;
+	width: 90.7%;
+	height: 38%;
+	border: 1px solid black;
+	/*border-radius: 8px;*/
+	background-color: #063146;/* #535454; gris clair*/
+}
+
+.map-labels {
+	position: absolute;
+	top: 74%;
+	left: 8%;
+	width: 91%;
+	height: 22%;
+}
+
+.label {
+	position: relative;
+	display: inline-block;
+	width: 12%;
+	height: 90%;
+	border: 1px solid black;
+	/*border-radius: 8px;*/
+	background-color: #266EDB;
+}
