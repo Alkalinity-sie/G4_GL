@@ -4,12 +4,15 @@ var geocodeService;
 var searchControl;
 var last_adresse;//adresse de là où on a cliqué pour la dernière fois
 var currentUserID = 0;
-var currentMapID = 0
+var currentMapID = 0;
+var currentMarkerID = 0;
 var markersMAP = [];
-
+var sidebar_last_clicked = "";
+var photo_a_envoyer;
 function ouvreNouvelleCarte() {
 	//ajouter une nouvelle map dans la BDD
 	$.ajax({
+		async: false,
 		type:'PUT',
 		dataType:'json',
 		url:'ws/User/'+currentUserID+'/addPersonnalMap'
@@ -20,74 +23,6 @@ function ouvreNouvelleCarte() {
 	//enlever tous les marqueurs existants sur la map
 	markerGroup.clearLayers(); //removeLayer(219) envleve le marqueur d'id 219
 
-}
-
-async function onMapClick(e) {
-	var adresse = await trouveAdresse(e);
-	var last_adresse = adresse;
-	var markerID;
-	//création d'un Event dans la BDD
-	$.ajax({
-		async: false, //pour que on attend la fin de la requete d'abord
-		type:'PUT',
-		dataType:'json',
-		url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/addEvent'
-	}).done(function(id){
-		console.log('Nouveau Event ajoutée à la position : '+e.latlng.lat + " / " + e.latlng.lng)
-		markerID = id
-	});
-	ajoutMarqueur(markerID, "", adresse, "", e.latlng.lat, e.latlng.lng) //nom = "" et description = ""
-}
-
-
-/* Fonction qui se déclenche quand on clique sur une carte dans Cartes Perso ou Partagées */
-function mapclick(mapID){
-	console.log("Vous avez sélectionné la map d'ID : "+mapID);
-	currentMapID = mapID;
-	//enlever tous les marqueurs existants sur la map
-	markerGroup.clearLayers();
-	markersMAP = [] //on vide les marqueurs
-	$.ajax({
-	    async: false,
-		type:'GET',
-		dataType:'json',
-		url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/getEvents/'
-	}).done(function(events){
-		console.log('Récupération des évènements de la map d\'ID '+currentMapID+'a réussie!')
-		console.log(events)
-		for(var i = 0; i < events.length; i++){
-			var e = events[i]
-			var id = e.id
-			var nom = e.name
-			var description = e.description
-			var a = e.address.split("*")
-			var adresse = a[0]
-			var lat = a[1]
-			var lng = a[2]
-			var beginning = e.beginning
-			var end = e.end
-			var labels = e.labels
-			var photos = e.photos
-			ajoutMarqueur(id, nom, adresse, description, lat, lng)
-		}
-	});
-}
-
-function partagerLaCarte (){ /* Non terminé */
-	/* Partage la carte à l'utilisateur quand on cliquer sur partager*/
-	nom = document.querySelector('.shareWith').value;
-	console.log(nom);
-	/*-----
-		TROUVER L'ID DE DESTINATAIRE A PARTIR DE SON NOM
-	------*/
-	var TO_id;
-	$.ajax({
-		type:'PUT',
-		dataType:'json',
-		url:'/User/'+TO_id+'/addMapToSharedToMe/'+currentUserID+'/'+currentMapID
-	}).done(function(id){
-		console.log('Map partagée!')
-	});
 }
 
 $(function (){
@@ -115,6 +50,18 @@ $(function (){
 		//var lat = position.coords.latitude;
     	//var lng = position.coords.longitude;
 		//L.marker([lat, lng]).addTo(markerGroup);
+		/*
+		$.ajax({
+			async: false,
+			type:'GET',
+			dataType:'json',
+			url:'ws/User/Jean/mdp123/getCorrespondantUser/'
+		}).done(function(User){
+			console.log("User:")
+			console.log(User);
+		});
+		*/
+		
 
 });
 
@@ -134,12 +81,13 @@ function EnableDisableEvent(marker) {
 }
 
 function getCartesPerso(){
+	sidebar_last_clicked = "perso";
 	$.ajax({
+		async: false,
 		type:'GET',
 		dataType:'json',
 		url:'ws/User/'+currentUserID+'/getPersonnalMaps'
 	}).done(function(maps){
-		console.log(maps)
 		$("#liste-des-cartes").html("");
 		for(var i = 0; i < maps.length; i++){
 			var style = "font-size: 12px"
@@ -154,7 +102,9 @@ function getCartesPerso(){
 }
 
 function getCartesParta(){
+	sidebar_last_clicked = "shared";
 	$.ajax({
+		async: false,
 		type:'GET',
 		dataType:'json',
 		url:'ws/User/'+currentUserID+'/getMapsSharedToMe'
@@ -266,17 +216,19 @@ function supprimerLaCarte () {
 	$.ajax({
 		type:'DELETE',
 		dataType:'json',
-		url:'ws/User/'+currentUserID+'/removePersonnalMap/'+currentMapID
-	}).done(function(id){
-			console.log('Map supprimée des cartes perso!')
+		url:'ws/User/'+currentUserID+'/removeMap/'+currentMapID
+	}).done(function(carte_perso){
+			if(carte_perso){
+				console.log('Map supprimée des cartes personnelles!')
+			} else {
+				console.log('Map supprimée des cartes partagées!')	
+			}
 	});
-	$.ajax({
-		type:'DELETE',
-		dataType:'json',
-		url:'ws/User/'+currentUserID+'/removeSharedMap/'+currentMapID
-	}).done(function(id){
-			console.log('Map supprimée des cartes partagées!')
-	});
+	if(sidebar_last_clicked=="perso"){
+		getCartesPerso();
+	} else if (sidebar_last_clicked=="shared"){
+		getCartesParta();
+	}
 }
 
 
@@ -289,200 +241,183 @@ function getMarkerOfID(markerID){
 	console.log("ce marqueur n'existe pas")
 }
 
-function supprimerLocation (markerID){
-	console.log("markerID qu'on veut supprimer : "+markerID)
-	var marker = getMarkerOfID(markerID)
-	console.log("supprimerLocation : marker : "+marker)
-	console.log(markerGroup.removeLayer(marker))
+function corrigeToutSaufAnnee (nb){
+	if(nb.length < 2){
+		return "0"+nb;
+	}
+	return nb;
+}
+
+function corrigeAnnee (nb){
+	if(nb.length < 4){
+		var difference = nb.length - 4;
+		var zeros = "";
+		for(var i = 0; i < difference; i++){
+			zeros.add("0");
+		}
+		return zeros + nb;
+	}
+	return nb;
+}
+
+function JSONDateTimeToString (dt){
+	minute = corrigeToutSaufAnnee(dt.minute+"")
+	heure  = corrigeToutSaufAnnee(dt.hour+"")
+	mois = corrigeToutSaufAnnee(dt.monthValue+"")
+	jour = corrigeToutSaufAnnee(dt.dayOfMonth+"")
+	annee = corrigeAnnee(dt.year+"")
+	//1999-12-01T12:40
+	return annee+"-"+mois+"-"+jour+"T"+heure+":"+minute
+}
+
+
+/* Fonction qui se déclenche quand on clique sur une carte dans Cartes Perso ou Partagées */
+function mapclick(mapID){
+	console.log("Fonction mapclick : Vous avez sélectionné la map d'ID : "+mapID);
+	currentMapID = mapID;
+	//enlever tous les marqueurs existants sur la map
+	markerGroup.clearLayers();
+	markersMAP = [] //on vide les marqueurs
 	$.ajax({
-		type:'DELETE',
+	    async: false,
+		type:'GET',
 		dataType:'json',
-		url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/removeLocation/'+markerID
-	}).done(function(){
-			console.log('Location supprimée!')
+		url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/getEvents/'
+	}).done(function(events){
+		console.log('Récupération des évènements de la map d\'ID '+currentMapID+' a réussie!')
+		for(var i = 0; i < events.length; i++){
+			var e = events[i]
+			var id = e.id
+			var nom = e.name
+			var description = e.description
+			var a = e.address.split("*")
+			var adresse = a[0]
+			var lat = a[1]
+			var lng = a[2]
+			var debut = e.beginning
+			var end = e.end
+			var labels = e.labels
+			var photos = e.photos
+			ajoutMarqueur(id, nom, adresse, description, labels, debut.substring(0,16), end.substring(0,16),lat, lng, true) //on place des sauvegardes
+		}
 	});
+}
+
+async function onMapClick(e) {
+	var adresse = await trouveAdresse(e);
+	var last_adresse = adresse;
+	var markerID;
+	//création d'un Event dans la BDD
 	$.ajax({
-		type:'DELETE',
+		async: false, //pour que on attend la fin de la requete d'abord
+		type:'PUT',
 		dataType:'json',
-		url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/removeEvent/'+markerID
-	}).done(function(){
-			console.log('Event supprimée!')
+		url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/addEvent'
+	}).done(function(id){
+		console.log('Nouveau Event ajoutée à la position : '+e.latlng.lat + " / " + e.latlng.lng)
+		markerID = id
+	});
+	ajoutMarqueur(markerID, "", adresse, "", "", "", "", e.latlng.lat, e.latlng.lng, false) 
+}
+
+
+
+
+
+/* Partage la carte à l'utilisateur quand on cliquer sur partager*/
+function partagerLaCarte (){
+	user_name = document.getElementById('shareWith').value;
+	console.log("Vous voulez partager la carte d'ID "+currentMapID+" à "+user_name);
+	var TO_id;
+	//on cherche l'id de l'utilisateur
+	$.ajax({
+		async: false,
+		type:'GET',
+		dataType:'json',
+		url:'ws/User/'+user_name+'/getUserID'
+	}).done(function(user_id){
+		console.log('Map partagée!')
+		console.log("destinataire a l'ID "+user_id)
+		TO_id = user_id
+	});
+	if(TO_id == -1) {
+		console.log('Cet utilisateur n\'existe pas')
+		return
+	}
+	$.ajax({
+		type:'PUT',
+		dataType:'json',
+		url:'ws/User/'+TO_id+'/addMapToSharedToMe/'+currentUserID+'/'+currentMapID
+	}).done(function(id){
+		console.log('Map partagée!')
 	});
 }
 
-function enregistrerLocation (boolEvent, markerID, lat, lng, nom, adresse, description, labels, debut, fin){
-	console.log("enregistrerLocation : marqueur ID:"+markerID)
-	console.log("enregistrerLocation : nom "+nom)
-	console.log("enregistrerLocation : description "+description)
-	console.log("enregistrerLocation : adresse "+adresse)
-	nom = (nom=="")?"x":nom;
-	adresse = (adresse=="")?"x":adresse;
-	description = (description=="")?"x":description;
-	if(boolEvent == false){
-		$.ajax({
-			type:'POST',
-			dataType:'text',
-			url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/Location/'+markerID+'/setName/'+nom
-		}).done(function(){
-			console.log('Nom du Location sauvegardé')
-		});
-		$.ajax({
-			type:'POST',
-			dataType:'text',
-			url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/Location/'+markerID+'/setAddress/'+adresse+'?'+lat+'?'+lng
-		}).done(function(){
-			console.log('Adresse du Location sauvegardé')
-		});
-		$.ajax({
-			type:'POST',
-			dataType:'text',
-			url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/Location/'+markerID+'/setDescription/'+description
-		}).done(function(){
-			console.log('Description du Location sauvegardé')
-		});
-		return;
-	}
-	//event
+/* ajouter la map parmis ses cartes partagées */
+function ajouterLaMap(){
+	console.log("ajouterLaMap() est appelée!");
+
 	$.ajax({
-		type:'POST',
-		dataType:'text',
-		url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/Event/'+markerID+'/setName/'+nom
-	}).done(function(){
-		console.log('Nom du Event sauvegardé')
-	});
-	$.ajax({
-		type:'POST',
-		dataType:'text',
-		url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/Event/'+markerID+'/setAddress/'+adresse+'*'+lat+'*'+lng
-	}).done(function(){
-		console.log('Adresse du Event sauvegardé')
-	});
-	$.ajax({
-		type:'POST',
-		dataType:'text',
-		url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/Event/'+markerID+'/setDescription/'+description
-	}).done(function(){
-		console.log('Description du Event sauvegardé')
+		async: false,
+		type:'PUT',
+		dataType:'json',
+		url:'ws/User/'+currentUserID+'/addMapToSharedToMe/0/'+currentMapID
+	}).done(function(id){
+		console.log('Map ajoutée parmis mes cartes (partagées)!')
 	});
 
-	if(debut.length > 0) {
-		//1999-12-01T12:40
-		var B_Year = debut.substring(0,4);
-		var B_Month = debut.substring(5,7);
-		var B_DayOfMonth = debut.substring(8,10);
-		var B_Hour = debut.substring(11,13);
-		var B_Minute = debut.substring(14,16); //peut peut etre planter si minute = 07 et si la BDD attend 7
-		$.ajax({
-			type:'POST',
-			dataType:'json',
-			url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/Event/'+markerID+'/setBeginning/'+B_Year+'/'+B_Month+'/'+B_DayOfMonth+'/'+B_Hour+'/'+B_Minute
-		}).done(function(id){
-			console.log('Début du Event sauvegardé')
-		});
-	}
-	if(debut.fin > 0) {
-		var E_Year = debut.substring(0,4);
-		var E_Month = debut.substring(5,7);
-		var E_DayOfMonth = debut.substring(8,10);
-		var E_Hour = debut.substring(11,13);
-		var E_Minute = debut.substring(14,16); //peut peut etre planter si minute = 07 et si la BDD attend 7
-		$.ajax({
-			type:'POST',
-			dataType:'json',
-			url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/Event/'+markerID+'/setEnd/'+E_Year+'/'+E_Month+'/'+E_DayOfMonth+'/'+E_Hour+'/'+E_Minute
-		}).done(function(id){
-			console.log('Fin du Event sauvegardé')
-		});
-	}
+
 }
 
-function ajoutMarqueur(markerID, nom_initiale, adresse_initiale, description_initiale, lat, lng){
-	//ajout du marqueur
-	var marker = L.marker([lat, lng]).addTo(markerGroup);
-    var code =`var nom = document.getElementById('nom').value;
-		       var adresse = document.getElementById('adresse').value;
-			   var description = document.getElementById('description').value;
-		       var labels = document.getElementById('labels').value;
-		       var debut = document.getElementById('debutInput').value;
-			   var fin = document.getElementById('finInput').value;
-			   enregistrerLocation(true,`+markerID+`,`+lat+`,`+lng+`, nom, adresse, description, labels, debut, fin); `;
-    var temp = _.template($('#templatePopup').html()); 
-    //création du popup
-	var popup = temp({ 
-		"mID":markerID,
-		"code":code,
-		"markerID":markerID,
-		"nom":nom_initiale,
-		"adresse":adresse_initiale,
-		"description":description_initiale
+$('#buttonRechercher').click(function(){
+	var entry = document.getElementById('mapSearchBar').value;
+	if(entry == ''){
+		entry = 'all'
+	}
+	$.ajax({
+		type:'GET',
+		dataType:'json', //text si fonctionne pas
+		url:'ws/BarreDeRecherche/'+entry+'/'+currentUserID+'/true/getMapResults'
+	}).done(function(maps){
+
+		$(".center-liste").html("");
+		var map_elem = _.template($('#templateMapElement').html()); 
+		var label = _.template($('#templateLabel').html());
+		for(var i = 0; i < maps.length; i++){
+			(function (i){
+				var resultat = map_elem({ //ce qu'on affiche dans le code template
+					"indice":maps[i].id+"",//une map n'a pas d'attribut proprietaire, mieux vaut l'enlever et PLACER LE BOUTON 'AJOUTER PARMIS MES CARTES' A LA PLACE
+					"nom":maps[i].name,
+					"description":maps[i].description
+				});
+				//ajout de l'element a la fin
+				$(".center-liste").append(resultat);
+				document.querySelector('.indice'+maps[i].id).addEventListener("click", function(e) {
+					mapclick(maps[i].id)
+				}, false);
+
+				//ajout des labels
+				$.ajax({
+					async: false,
+					type:'GET',
+					dataType:'json',
+					url:'ws/User/0/Map/'+maps[i].id+'/getAllLabels'
+				}).done(function(labels){
+					var label = _.template($('#templateLabel').html());
+					for(var j = 0; j < labels.length; j++){
+						(function (lab){
+							var l = label({"contenu":lab});
+							$('.indice'+maps[i].id).find('.map-labels').append(l);
+						})(labels[j]);
+					}
+				});
+				
+				
+			})(i); //immediate invocation 
+		}
+		console.log("Résultats récupérées et placés")
 	});
-    marker.bindPopup(popup).openPopup();
-    console.log("markerId : "+markerID)
-    //ne pas mettre le code suivant dans une fonction a part sinon fonctionne pas
-
-    marker.on('click', function(e){ //click d'ouverture et fermeture
-   		var content = e.target.getPopup().getContent();
-   		var doc = new DOMParser().parseFromString(content, "text/html")
-		var ID = doc.getElementById("mID").getAttribute("data-value");
-		console.log("ID du marqueur sur lequel j'ai cliqué : "+ID);
-		var marker_nom = "";
-		var marker_description = "";
-		var marker_adresse = "";
-	    $.ajax({
-	    	async: false,
-			type:'GET',
-			dataType:'text',
-			url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/Event/'+ID+'/getName'
-		}).done(function(nom){
-			console.log('Récupération du nom du marqueur!')
-			marker_nom = nom;
-		});
-
-		$.ajax({
-			async: false,
-			type:'GET',
-			dataType:'text',
-			url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/Event/'+ID+'/getAddress'
-		}).done(function(adresse){
-			console.log('Récupération de l\'adresse du marqueur!')
-			marker_adresse = adresse;
-		});
-
-		$.ajax({
-			async: false,
-			type:'GET',
-			dataType:'text',
-			url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/Event/'+ID+'/getDescription'
-		}).done(function(description){
-			console.log('Récupération de la description du marqueur!')
-			marker_description = description;
-		});
-
-		var code =`var nom = document.getElementById('nom').value;
-			       var adresse = document.getElementById('adresse').value;
-		 		   var description = document.getElementById('description').value;
-			       var labels = document.getElementById('labels').value;
-			       var debut = document.getElementById('debutInput').value;
-				   var fin = document.getElementById('finInput').value;
-				   var boolEvent = document.getElementById('statutMap').checked;
-			       enregistrerLocation(true,`+ID+`,`+e.latlng.lat+`,`+e.latlng.lng+`, nom, adresse, description, labels, debut, fin); `;
-
-		var temp = _.template($('#templatePopup').html()); 
-		var popup = temp({ 
-			"mID":markerID,
-			"code":code,
-			"markerID":markerID,
-			"nom":marker_nom,
-			"adresse":marker_adresse,
-			"description":marker_description
-		});
-	   	marker._popup.setContent(popup)
-	});
-    markersMAP.push([markerID, marker]);
-    console.log("markersMAP : "+markersMAP)
-    console.log("layerGroup : "+markerGroup)
-}
-
+});
 
 
 

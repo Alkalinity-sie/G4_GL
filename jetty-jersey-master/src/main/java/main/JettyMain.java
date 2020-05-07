@@ -40,7 +40,7 @@ public class JettyMain {
 		ServletContextHandler handlerWebServices = new ServletContextHandler(ServletContextHandler.SESSIONS);
 		handlerWebServices.setContextPath("/ws");
 		handlerWebServices.addServlet(servletHolder, "/*");
-
+		
 		// Add a handler for resources (/*)
 		ResourceHandler handlerPortal = new ResourceHandler();
 		handlerPortal.setResourceBase("src/main/webapp");

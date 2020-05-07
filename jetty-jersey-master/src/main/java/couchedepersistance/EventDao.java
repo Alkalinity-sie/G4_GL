@@ -1,9 +1,6 @@
 package couchedepersistance;
 
-import java.time.LocalDateTime;
 import java.util.List;
-
-import javax.swing.ImageIcon;
 
 
 public interface EventDao {
@@ -13,9 +10,9 @@ public interface EventDao {
 	//get an event
 	Event getEvent (int user_id, int map_id, int event_id);
     //retrieval of the date and hour of begginning of an event
-    LocalDateTime getBeginning (int user_id, int map_id, int event_id);
+    String getBeginning (int user_id, int map_id, int event_id);
     //retrieval of the date and hour of ending of an event
-    LocalDateTime getEnd (int user_id, int map_id, int event_id);
+    String getEnd (int user_id, int map_id, int event_id);
    
     //retrieval of an event's name
     String getName (int user_id, int map_id, int event_id);
@@ -26,7 +23,7 @@ public interface EventDao {
     //retrieval of an event's list of labels
     List<String> getLabels (int user_id, int map_id, int event_id);
     //retrieval of an event's list of photos
-    List<ImageIcon> getPhotos (int user_id, int map_id, int event_id);
+    List<Long> getPhotos (int user_id, int map_id, int event_id);
     
     /* POST */
     
@@ -43,7 +40,7 @@ public interface EventDao {
     //add a label to an event
     void addLabel (int user_id, int map_id, int event_id, String label);
     //add a photo to an event
-    int addPhoto (int user_id, int map_id, int event_id, ImageIcon photo);
+    int addPhoto (int user_id, int map_id, int event_id, String photo);
     //remove a label
     void removeLabel (int user_id, int map_id, int event_id, String label);
     //remove a photo

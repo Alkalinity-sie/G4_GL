@@ -1,11 +1,11 @@
 package ressources;
 
-import couchedepersistance.EventDao;
 import couchedepersistance.Map;
 import couchedepersistance.Photo;
 import couchedepersistance.User;
 import couchedepersistance.Event;
-import java.time.LocalDateTime;
+import couchedepersistance.EventDao;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +13,6 @@ import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
-import javax.swing.ImageIcon;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -47,40 +46,22 @@ public class EventRessource implements EventDao {
 		@GET
 		@Path("/getBeginning")
 		//retrieval of the date and hour of begginning of an event
-    	public LocalDateTime getBeginning (
+    	public String getBeginning (
         		@PathParam("UserID")  int user_id, 
         		@PathParam("MapID")   int map_id, 
         		@PathParam("EventID") int event_id) {
-			/*
-			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return null;
-			return e.getBeginning();
-			*/
-			System.out.println("getBeginning");
 			Event e = Database.getEvent(user_id, map_id, event_id);
-			if(e == null) System.out.println("event est null");
-			if(e == null) return null;
-			
-			LocalDateTime ldt = e.getBeginning();
-			if(ldt == null) System.out.println("ldt est null");
-			
-			return e.getBeginning();
+			return e.getBeginning().toString();
     	}
 		@GET
 		@Path("/getEnd")
     	//retrieval of the date and hour of ending of an event
-        public LocalDateTime getEnd (
+        public String getEnd (
         		@PathParam("UserID")  int user_id, 
         		@PathParam("MapID")   int map_id, 
         		@PathParam("EventID") int event_id) {
-			/*
-			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return null;
-			return e.getEnd();
-			*/
 			Event e = Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return null;
-			return e.getEnd();
+			return e.getEnd().toString();
         }
 		
 		@GET
@@ -107,11 +88,7 @@ public class EventRessource implements EventDao {
 	    		@PathParam("UserID")     int user_id, 
 	    		@PathParam("MapID")      int map_id, 
 	    		@PathParam("EventID") int event_id) {
-			/*
-			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return null;
-			return e.getDescription();
-			*/
+
 			Event e = Database.getEvent(user_id, map_id, event_id);
 			if(e == null) return "null";
 			return e.getDescription();
@@ -124,15 +101,9 @@ public class EventRessource implements EventDao {
 	    		@PathParam("UserID")     int user_id, 
 	    		@PathParam("MapID")      int map_id, 
 	    		@PathParam("EventID") int event_id) {
-			/*
-			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return null;
-			return e.getAddress();
-			*/
 			Event e = Database.getEvent(user_id, map_id, event_id);
 			if(e == null) return "null";
 			String adresse = e.getAddress();
-			System.out.println("EventRessource.java - getAddress : "+adresse);
 			return adresse;
 	    }
 		
@@ -143,12 +114,7 @@ public class EventRessource implements EventDao {
 	    		@PathParam("UserID")     int user_id, 
 	    		@PathParam("MapID")      int map_id, 
 	    		@PathParam("EventID")    int event_id){
-			/*
-			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return null;
-			return e.getLabels();
-			*/
-			
+
 			Event e = Database.getEvent(user_id, map_id, event_id);
 			if(e == null) return null;
 			return e.getLabels();
@@ -157,28 +123,50 @@ public class EventRessource implements EventDao {
 		@GET
 		@Path("/getPhotos")
 	    //retrieval of a location's list of photos
-	    public List<ImageIcon> getPhotos (
+	    public List<Long> getPhotos (
 	    		@PathParam("UserID")     int user_id, 
 	    		@PathParam("MapID")      int map_id, 
 	    		@PathParam("EventID")    int event_id){
-			/*
-			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
+			Event e = Database.getEvent(user_id, map_id, event_id);
 			if(e == null) return null;
-			List<Photo> photos = e.getPhotos();
-			List<ImageIcon> res = new ArrayList<>();
-			for(Photo p : photos) {
-				res.add(p.getPhoto());
+			/*
+			List<Photo> res = new ArrayList<>();
+			for(Long pid : e.getPhotos()){
+				Photo p = Database.getPhoto(user_id, map_id, event_id, pid.intValue());
+				res.add(p);
+			}
+			System.out.println("taille de la liste de photos : "+res.size());
+			for(int i = 0; i < res.size(); i++) {
+				if(res.get(i)!=null) System.out.println(res.get(i).getId().intValue());
+				else System.out.println("null");
+			}*/
+			List<Long> res = new ArrayList<>();
+			for(Long pid : e.getPhotos()){
+				res.add(new Long(pid.intValue()));
 			}
 			return res;
-			*/
+	    }
+		
+		@GET
+		@Path("/getPhoto/{PhotoID}/{indexDebut}/{indexFin}")
+	    public String getPhotos (
+	    		@PathParam("UserID")     int user_id, 
+	    		@PathParam("MapID")      int map_id, 
+	    		@PathParam("EventID")    int event_id,
+	    		@PathParam("PhotoID")    int photo_id,
+	    		@PathParam("indexDebut") int indexDebut,
+	    		@PathParam("indexFin")   int indexFin){
 			Event e = Database.getEvent(user_id, map_id, event_id);
 			if(e == null) return null;
 			
-			List<ImageIcon> res = new ArrayList<>();
-			for(Long pid : e.getPhotos()){
-				Photo p = Database.getPhoto(user_id, map_id, event_id, pid.intValue());
-				res.add(p.getPhoto());
+			Photo p = Database.getPhoto(user_id, map_id, event_id, photo_id);
+			
+			if(indexDebut==-1 && indexFin==-1) {
+				int taille = p.getPhoto().length();
+				return p.getPhoto().length()+"";
 			}
+			String res = p.getPhoto().substring(indexDebut, indexFin);
+			System.out.println(res.substring(0, 30));
 			return res;
 	    }
 		
@@ -196,15 +184,12 @@ public class EventRessource implements EventDao {
 	    		@PathParam("DayOfMonth") int dayOfMonth, 
 	    		@PathParam("Hour")       int hour, 
 	    		@PathParam("Minute")     int minute) {
-			/*
-			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return;
-			String chaine = ""+year+"-"+month+"-"+dayOfMonth+"T"+hour+":"+minute+":"+"00.000"; 
-			//exemple : "2020-10-06T17:00:00.000"
-			LocalDateTime beginning = LocalDateTime.parse(chaine);
-			e.setBeginning(beginning);
-			*/
-			
+	
+			System.out.println(year);
+			System.out.println(month);
+			System.out.println(dayOfMonth);
+			System.out.println(hour);
+			System.out.println(minute);
 			PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
 			PersistenceManager pm = pmf.getPersistenceManager();
 			Transaction tx = pm.currentTransaction();
@@ -212,19 +197,33 @@ public class EventRessource implements EventDao {
 				tx.begin();
 				
 				
-				Event e = Database.getEvent(user_id, map_id, event_id);
-				if(e == null) return;
+				Event e = pm.getObjectById(Event.class, event_id);
 				
-				int Byear = e.getBeginning().getYear();
-				int Bmonth = e.getBeginning().getMonthValue();
-				int BdayOfMonth = e.getBeginning().getDayOfMonth();
-				int Bhour = e.getBeginning().getHour();
-				int Bminute = e.getBeginning().getMinute();
-				String Bchaine = ""+Byear+"-"+Bmonth+"-"+BdayOfMonth+"T"+Bhour+":"+Bminute+":"+"00.000"; 
+				String Bchaine = ""+Copy.intToProperString(year)+"-"
+						+Copy.intToProperString(month)+"-"
+						+Copy.intToProperString(dayOfMonth)+"T"
+						+Copy.intToProperString(hour)+":"
+						+Copy.intToProperString(minute)+":"+"00.000"; 
+				/*
 				//exemple : "2020-10-06T17:00:00.000"
 				LocalDateTime beginning = LocalDateTime.parse(Bchaine);
-				e.setBeginning(beginning);
-				
+				System.out.println(Bchaine);*/
+				e.setBeginning(Bchaine);
+				System.out.println("changement à : "+e.getBeginning().toString());
+				tx.commit();
+			} finally {
+				if (tx.isActive()) tx.rollback();
+				pm.close();
+				pmf.close();
+			}
+			pmf = JDOHelper.getPersistenceManagerFactory("Example");
+			pm = pmf.getPersistenceManager();
+			tx = pm.currentTransaction();
+			try {
+				tx.begin();
+				Event e = pm.getObjectById(Event.class, event_id);
+				//exemple : "2020-10-06T17:00:00.000"
+				System.out.println("Après recup à : "+e.getBeginning());
 				tx.commit();
 			} finally {
 				if (tx.isActive()) tx.rollback();
@@ -246,14 +245,6 @@ public class EventRessource implements EventDao {
 	    		@PathParam("DayOfMonth") int dayOfMonth, 
 	    		@PathParam("Hour")       int hour, 
 	    		@PathParam("Minute")     int minute) {
-			/*
-			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return;
-			String chaine = ""+year+"-"+month+"-"+dayOfMonth+"T"+hour+":"+minute+":"+"00.000"; 
-			//exemple : "2020-10-06T17:00:00.000"
-			LocalDateTime ending = LocalDateTime.parse(chaine);
-			e.setBeginning(ending);
-			*/
 			
 			PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
 			PersistenceManager pm = pmf.getPersistenceManager();
@@ -262,18 +253,17 @@ public class EventRessource implements EventDao {
 				tx.begin();
 				
 				
-				Event e = Database.getEvent(user_id, map_id, event_id);
-				if(e == null) return;
+				Event e = pm.getObjectById(Event.class, event_id);
 				
-				int Eyear = e.getBeginning().getYear();
-				int Emonth = e.getBeginning().getMonthValue();
-				int EdayOfMonth = e.getBeginning().getDayOfMonth();
-				int Ehour = e.getBeginning().getHour();
-				int Eminute = e.getBeginning().getMinute();
-				String Echaine = ""+Eyear+"-"+Emonth+"-"+EdayOfMonth+"T"+Ehour+":"+Eminute+":"+"00.000"; 
+				String Echaine = ""+Copy.intToProperString(year)+"-"
+						+Copy.intToProperString(month)+"-"
+						+Copy.intToProperString(dayOfMonth)+"T"
+						+Copy.intToProperString(hour)+":"
+						+Copy.intToProperString(minute)+":"+"00.000";  
+				
 				//exemple : "2020-10-06T17:00:00.000"
-				LocalDateTime end = LocalDateTime.parse(Echaine);
-				e.setBeginning(end);
+				//LocalDateTime end = LocalDateTime.parse(Echaine);
+				e.setEnd(Echaine);
 				
 				tx.commit();
 			} finally {
@@ -434,6 +424,55 @@ public class EventRessource implements EventDao {
 	    }
 	    
 	    @POST
+	    @Path("/setLabels/{Text}")
+	    //add a label to an event
+	    public void setLabels (
+	    		@PathParam("UserID")  int user_id, 
+	    		@PathParam("MapID")   int map_id, 
+	    		@PathParam("EventID") int event_id, 
+	    		@PathParam("Text")   String text) {
+
+	    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+			PersistenceManager pm = pmf.getPersistenceManager();
+			Transaction tx = pm.currentTransaction();
+			try {
+				tx.begin();
+				
+				User u = pm.getObjectById(User.class, user_id);
+				
+				String labels[] = text.split(" ");
+				
+				//on regarde si map_id appartient à user_id
+				boolean found = false;
+				for(Long mid : u.getMyMaps()) {
+					if(mid.intValue() == map_id) {
+						found = true;
+					}
+				}
+				
+				if(found == true) {
+					Map m = pm.getObjectById(Map.class, map_id);
+					//on regarde si location_id appartient à map_id
+					for(Long eid : m.getMyEvents()) {
+						if(eid.intValue() == event_id) {
+							Event event = pm.getObjectById(Event.class, event_id);
+							event.setLabels(new ArrayList<String>());
+							for(int i = 0; i < labels.length; i++) {
+								event.getLabels().add(labels[i]);
+							}
+						}
+					}
+				}
+				
+				tx.commit();
+			} finally {
+				if (tx.isActive()) tx.rollback();
+				pm.close();
+				pmf.close();
+			}
+	    }
+	    
+	    @POST
 	    @Path("/addLabel/{Label}")
 	    //add a label to an event
 	    public void addLabel (
@@ -483,22 +522,14 @@ public class EventRessource implements EventDao {
 	    }
 	    
 	    @POST
-	    @Path("/addPhoto/{Photo}")
-	    //add a photo to an event
+	    @Path("/addPhoto/")
+	    //add a photo to an event 
 	    public int addPhoto (
 	    		@PathParam("UserID")  int user_id, 
 	    		@PathParam("MapID")   int map_id, 
 	    		@PathParam("EventID") int event_id, 
-	    		@PathParam("Photo")   ImageIcon photo) {
-	    	/*
-	    	Event e = (Event) Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return -1;
-			Photo p = new Photo(photo);
-			e.getPhotos().add(p);
-			return p.getId();
-			*/
+	    		String photo) { //le contenu de la photo
 	    	int id = -1;
-	    	
 	    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
 			PersistenceManager pm = pmf.getPersistenceManager();
 			Transaction tx = pm.currentTransaction();
@@ -521,7 +552,8 @@ public class EventRessource implements EventDao {
 					for(Long eid : m.getMyEvents()) {
 						if(eid.intValue() == event_id) {
 							Event event = pm.getObjectById(Event.class, event_id);
-							Photo nouvelle = pm.makePersistent(new Photo());
+							Photo n = new Photo(); n.setPhoto(photo);
+							Photo nouvelle = pm.makePersistent(n);
 							id = nouvelle.getId().intValue();
 							event.getPhotos().add(new Long(id));
 						}
@@ -533,7 +565,6 @@ public class EventRessource implements EventDao {
 				pm.close();
 				pmf.close();
 			}
-	    	
 	    	return id;
 	    }
 	    
@@ -594,17 +625,6 @@ public class EventRessource implements EventDao {
 	    		@PathParam("MapID")   int map_id, 
 	    		@PathParam("EventID") int event_id,
 	    		@PathParam("PhotoID") int photo_id) {
-	    	/*
-	    	Event e = (Event) Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return;
-			List<Photo> photos = e.getPhotos();
-			for(Photo p : photos) {
-				if(p.getId()==photo_id) {
-					photos.remove(p);
-					break;
-				}
-			}
-			*/
 	    	
 	    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
 			PersistenceManager pm = pmf.getPersistenceManager();

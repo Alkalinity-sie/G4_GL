@@ -97,11 +97,6 @@ public class LocationRessource implements LocationDao {
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id,
     		@PathParam("LocationID") int location_id){
-		/*
-		Location l = Database.getLocation(user_id, map_id, location_id);
-		if(l == null) return null;
-		return l.getLabels();
-		*/
 		Location l = Database.getLocation(user_id, map_id, location_id);
 		if(l == null) return null;
 		return l.getLabels();
@@ -110,27 +105,17 @@ public class LocationRessource implements LocationDao {
 	@GET
 	@Path("/getPhotos")
     //retrieval of a location's list of photos
-    public List<ImageIcon> getPhotos (
+    public List<Photo> getPhotos (
     		@PathParam("UserID")     int user_id, 
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id){
-		/*
-		Location l = Database.getLocation(user_id, map_id, location_id);
-		if(l == null) return null;
-		List<Photo> photos = l.getPhotos();
-		List<ImageIcon> res = new ArrayList<>();
-		for(Photo p : photos) {
-			res.add(p.getPhoto());
-		}
-		return res;
-		*/
 		Location l = Database.getLocation(user_id, map_id, location_id);
 		if(l == null) return null;
 		
-		List<ImageIcon> res = new ArrayList<>();
+		List<Photo> res = new ArrayList<>();
 		for(Long pid : l.getPhotos()){
 			Photo p = Database.getPhoto(user_id, map_id, location_id, pid.intValue());
-			res.add(p.getPhoto());
+			res.add(p);
 		}
 		return res;
 		
@@ -284,6 +269,56 @@ public class LocationRessource implements LocationDao {
 			pmf.close();
 		}
     }
+    
+    @POST
+    @Path("/setLabels/{Text}")
+    //add a label to an event
+    public void setLabels (
+    		@PathParam("UserID")  int user_id, 
+    		@PathParam("MapID")   int map_id, 
+    		@PathParam("LocationID") int location_id, 
+    		@PathParam("Text")   String text) {
+
+    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.begin();
+			
+			User u = pm.getObjectById(User.class, user_id);
+			
+			String labels[] = text.split(" ");
+			
+			//on regarde si map_id appartient à user_id
+			boolean found = false;
+			for(Long mid : u.getMyMaps()) {
+				if(mid.intValue() == map_id) {
+					found = true;
+				}
+			}
+			
+			if(found == true) {
+				Map m = pm.getObjectById(Map.class, map_id);
+				//on regarde si location_id appartient à map_id
+				for(Long lid : m.getMyLocations()) {
+					if(lid.intValue() == location_id) {
+						Location loc = pm.getObjectById(Location.class, location_id);
+						loc.setLabels(new ArrayList<String>());
+						for(int i = 0; i < labels.length; i++) {
+							loc.getLabels().add(labels[i]);
+						}
+					}
+				}
+			}
+			
+			tx.commit();
+		} finally {
+			if (tx.isActive()) tx.rollback();
+			pm.close();
+			pmf.close();
+		}
+    }
+    
     
     @POST
     @Path("/addLabel/{Label}")
@@ -449,17 +484,6 @@ User u = pm.getObjectById(User.class, user_id);
     		@PathParam("MapID")      int map_id, 
     		@PathParam("LocationID") int location_id,
     		@PathParam("PhotoID")    int photo_id) {
-    	/*
-    	Location l = Database.getLocation(user_id, map_id, location_id);
-		if(l == null) return;
-		List<Photo> photos = l.getPhotos();
-		for(Photo p : photos) {
-			if(p.getId()==photo_id) {
-				photos.remove(p);
-			}
-		}
-		*/
-    	
     	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
 		PersistenceManager pm = pmf.getPersistenceManager();
 		Transaction tx = pm.currentTransaction();

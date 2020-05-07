@@ -46,15 +46,21 @@
 	color: white;
 }
 
-.map-proprietaire {
+.map-ajouter {
 	position: absolute;
 	top: 5%;
 	left: 69%;
 	width: 30%;
 	height: 18%;
 	border: 1px solid black;
-	/*border-radius: 5px;*/
-	background-color: #2D3136;
+	background-color: #0A316F;
+	transition: background-color .3s;
+	cursor: pointer;
+}
+
+.map-ajouter:hover {
+	background-color: #DDDDDD;
+	color: black;
 }
 
 .map-nom {
@@ -65,7 +71,7 @@
 	height: 18%;
 	border: 1px solid black;
 	/*border-radius: 5px;*/
-	background-color: #2D3136;
+	background-color: #0A316F;
 }
 
 .map-description {
@@ -88,6 +94,7 @@
 }
 
 .label {
+	overflow: auto;
 	position: relative;
 	display: inline-block;
 	width: 12%;

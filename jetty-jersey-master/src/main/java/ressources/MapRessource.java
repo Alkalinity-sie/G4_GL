@@ -32,8 +32,41 @@ public class MapRessource implements MapDao {
 	/* GET */
 	
 	@GET
+	@Path("/getAllLabels")
+    public List<String> getAllLabels (@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) { //OK
+		List<String> copy = new ArrayList<String>();
+		PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.begin();
+			
+			Map m = pm.getObjectById(Map.class, map_id);
+			for(Long lid : m.getMyLocations()) {
+				Location l = pm.getObjectById(Event.class, lid);
+				for(String label : l.getLabels()) {
+					copy.add(new String(label));
+				}
+			}
+			for(Long eid : m.getMyEvents()) {
+				Event e = pm.getObjectById(Event.class, eid);
+				for(String label : e.getLabels()) {
+					copy.add(new String(label));
+				}
+			}
+			
+			tx.commit();
+		} finally {
+			if (tx.isActive()) tx.rollback();
+			pm.close();
+			pmf.close();
+		}
+		return copy;
+    }
+	
+	@GET
 	@Path("/getMap")
-	//get a map. Can either be a shared one or a personnal one depending on the user_id
+	//get a map. Can either be a shared one or a personnal one depending on user_id
     public Map getMap (@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) { //OK
     	/*
 		Map m = Database.getPersonnalMap(user_id, map_id);
@@ -145,21 +178,28 @@ public class MapRessource implements MapDao {
 	@Path("/getEvents")
     //retrieval of map's list of locations
     public List<Event> getEvents (@PathParam("UserID") int user_id, @PathParam("MapID") int map_id){ //OK
-
-		User u = Database.getUser(user_id);
-		if(u == null) return null;
-		
-		if(u.getMyMaps().contains(new Long(map_id)) || u.getSharedToMe().contains(new Long(map_id))) {
-			Map m = Database.getMap(user_id, map_id);
-			List<Event> copy = new ArrayList<Event>();
-			for(Long eid : m.getMyEvents()) {
-				Event e = Database.getEvent(user_id, map_id, eid.intValue());
-				copy.add(e);
-			}
-			return copy;
-		}
+		System.out.println("Appel à getEvents avec user_id="+user_id+" et map_id="+map_id);
+		List<Event> copy = new ArrayList<Event>();
+		PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.begin();
 			
-		return null;
+			Map m = pm.getObjectById(Map.class, map_id);
+			for(Long eid : m.getMyEvents()) {
+				Event e = pm.getObjectById(Event.class, eid);
+				copy.add(Copy.copyEvent(e));
+			}
+			
+			tx.commit();
+		} finally {
+			if (tx.isActive()) tx.rollback();
+			pm.close();
+			pmf.close();
+		}
+		
+		return copy;
     }
 	
 	@GET

@@ -1,6 +1,5 @@
 package ressources;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,12 +21,7 @@ public class Copy {
 		// copie du champ : Long id;
 		Long id = new Long(p.getId().intValue());
 		copy.setId(id);
-		
-		/*
-		 * A MODIFIER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		 */
-		// copie du champ : ImageIcon photo; A MODFIIIIIIIIIIIER !!!!!!!!! PAS FAIT CAR NE SAIT PAS COMMENT INSTANCIER OBJET IMAGEICON
-		copy.setPhoto(null);
+		copy.setPhoto(new String(p.getPhoto()));
 		
 		return copy;
 	}
@@ -49,25 +43,27 @@ public class Copy {
 		copy.setId(id);
 		
 		// copie du champ : LocalDateTime beginning
+		/*
 		String Byear = intToProperString(e.getBeginning().getYear());
 		String Bmonth = intToProperString(e.getBeginning().getMonthValue());
 		String BdayOfMonth = intToProperString(e.getBeginning().getDayOfMonth());
 		String Bhour = intToProperString(e.getBeginning().getHour());
 		String Bminute = intToProperString(e.getBeginning().getMinute());
 		String Bchaine = ""+Byear+"-"+Bmonth+"-"+BdayOfMonth+"T"+Bhour+":"+Bminute+":"+"00.000"; 
-			//exemple : "2020-10-06T17:00:00.000"
-		LocalDateTime beginning = LocalDateTime.parse(Bchaine);
-		copy.setBeginning(beginning);
 		
+			//exemple : "2020-10-06T17:00:00.000"
+		LocalDateTime beginning = LocalDateTime.parse(Bchaine);*/
+		copy.setBeginning(new String(e.getBeginning()));
+		/*
 		// copie du champ : LocalDateTime end
-		String Eyear = intToProperString(e.getBeginning().getYear());
-		String Emonth = intToProperString(e.getBeginning().getMonthValue());
-		String EdayOfMonth = intToProperString(e.getBeginning().getDayOfMonth());
-		String Ehour = intToProperString(e.getBeginning().getHour());
-		String Eminute = intToProperString(e.getBeginning().getMinute());
+		String Eyear = intToProperString(e.getEnd().getYear());
+		String Emonth = intToProperString(e.getEnd().getMonthValue());
+		String EdayOfMonth = intToProperString(e.getEnd().getDayOfMonth());
+		String Ehour = intToProperString(e.getEnd().getHour());
+		String Eminute = intToProperString(e.getEnd().getMinute());
 		String Echaine = ""+Eyear+"-"+Emonth+"-"+EdayOfMonth+"T"+Ehour+":"+Eminute+":"+"00.000"; 
-		LocalDateTime end = LocalDateTime.parse(Echaine);
-		copy.setBeginning(end);
+		LocalDateTime end = LocalDateTime.parse(Echaine);*/
+		copy.setEnd(new String(e.getEnd()));
 		
 		// copie du champ : String name
 		copy.setName(new String(e.getName()));
@@ -88,6 +84,8 @@ public class Copy {
 		for(Long l : e.getPhotos()) photosCopy.add(new Long(l.intValue()));
 		copy.setPhotos(photosCopy);
 		
+		System.out.println("debut : "+copy.getBeginning().toString());
+		System.out.println("fin : "+copy.getEnd().toString());
 		return copy;
 	}
 	

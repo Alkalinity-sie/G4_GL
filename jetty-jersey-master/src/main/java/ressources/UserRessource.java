@@ -6,6 +6,7 @@ import java.util.List;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Query;
 import javax.jdo.Transaction;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -16,20 +17,86 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
 import couchedepersistance.Map;
 import couchedepersistance.User;
 import couchedepersistance.UserDao;
-
-@Path("/User/{UserID}")
+@Path("/User")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class UserRessource implements UserDao {
 	
 	/* GET */
 	
+	@SuppressWarnings("unchecked")
+	@GET
+	@Path("/{Username}/{Password}/getCorrespondantUser")
+	//get a user
+    public User getCorrespondantUser (@PathParam("Username") String username,
+    								  @PathParam("Password") String password) {
+		System.out.println("getCorrespondantUser");
+		User copy = null;
+		PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.begin();
+			
+			List<User> users = new ArrayList<User>();
+			Query q = pm.newQuery(User.class);
+			q.declareParameters("String user");
+			q.setFilter("username == user");
+
+			users = (List<User>) q.execute(username);
+			for(User u : users) {
+				if(u.getPassword().contentEquals(password)) {
+					copy = Copy.copyUser(u);
+					break;
+				}
+			}
+			
+			tx.commit();
+		} finally {
+			if (tx.isActive()) tx.rollback();
+			pm.close();
+			pmf.close();
+		}
+    	return copy;
+    }
+	
+	@SuppressWarnings("unchecked")
+	@GET
+	@Path("/{Username}/getUserID")
+	//get a user
+    public int getUser (@PathParam("Username") String username) {
+		System.out.println("getUserID");
+		int user_id = -1;
+		PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.begin();
+			
+			List<User> users = new ArrayList<User>();
+			Query q = pm.newQuery(User.class);
+			q.declareParameters("String user");
+			q.setFilter("username == user");
+
+			users = (List<User>) q.execute(username);
+			if(users.size()>0) user_id = users.get(0).getId().intValue();
+			
+			tx.commit();
+		} finally {
+			if (tx.isActive()) tx.rollback();
+			pm.close();
+			pmf.close();
+		}
+    	return user_id;
+    }
+	
 	
 	@GET
-	@Path("/getUser")
+	@Path("/{UserID}/getUser")
 	//get a user
     public User getUser (@PathParam("UserID") int user_id) {
 		System.out.println("getUser");
@@ -39,7 +106,7 @@ public class UserRessource implements UserDao {
     }
 	
 	@GET
-	@Path("/getUsername")
+	@Path("/{UserID}/getUsername")
 	//retrieval of a username
     public String getUsername (@PathParam("UserID") int user_id) {
 		System.out.println("getUsername");
@@ -49,7 +116,7 @@ public class UserRessource implements UserDao {
     }
 	
 	@GET
-	@Path("/getPassword")
+	@Path("/{UserID}/getPassword")
     //retrieval of a user's password 
     public String getPassword (@PathParam("UserID") int user_id) { 
 		System.out.println("getPassword");
@@ -59,7 +126,7 @@ public class UserRessource implements UserDao {
     }
 	
 	@GET
-	@Path("/getPersonnalMaps")
+	@Path("/{UserID}/getPersonnalMaps")
     //retrieval of user's list of maps that he created
     public List<Map> getPersonnalMaps (@PathParam("UserID") int user_id){ 
 		System.out.println("getPersonnalMaps");
@@ -75,7 +142,7 @@ public class UserRessource implements UserDao {
     }
 	
 	@GET
-	@Path("/getMapsSharedToMe")
+	@Path("/{UserID}/getMapsSharedToMe")
     //retrieval of a user's list of map that other users shared with him
     public List<Map> getMapsSharedToMe (@PathParam("UserID") int user_id){
 		System.out.println("getMapsSharedToMe");
@@ -93,7 +160,7 @@ public class UserRessource implements UserDao {
 	/* POST */
 	
 	@POST
-	@Path("/setUsername/{Username}")
+	@Path("/{UserID}/setUsername/{Username}")
 	//set of a username
     public void setUsername (@PathParam("UserID")   int user_id, 
     						 @PathParam("Username") String username) {
@@ -115,7 +182,7 @@ public class UserRessource implements UserDao {
 	}
 	
 	@POST
-	@Path("/setPassword/{Password}")
+	@Path("/{UserID}/setPassword/{Password}")
     //set of a user's password 
 	public void setPassword (@PathParam("UserID") int user_id, @PathParam("Password") String password) { 
 		System.out.println("setPassword");
@@ -139,7 +206,7 @@ public class UserRessource implements UserDao {
 	/* PUT */
 	
 	@PUT
-	@Path("/addPersonnalMap")
+	@Path("/{UserID}/addPersonnalMap")
     //add a new (empty) personnal map
 	public int addPersonnalMap (@PathParam("UserID") int user_id) {
 		System.out.println("addPersonnalMap");
@@ -166,7 +233,7 @@ public class UserRessource implements UserDao {
 	}
 	
 	@PUT
-	@Path("/addMapToSharedToMe/{FromUserID}/{SharedMapID}")
+	@Path("/{UserID}/addMapToSharedToMe/{FromUserID}/{SharedMapID}")
     //add a new shared map 
 	public void addMapToSharedToMe (
 			@PathParam("FromUserID")  int FROM_user_id, 
@@ -180,11 +247,7 @@ public class UserRessource implements UserDao {
 			tx.begin();
 			
 			User TO = pm.getObjectById(User.class, user_id);
-			User FROM = pm.getObjectById(User.class, FROM_user_id);
-			
-			if(FROM.getMyMaps().contains(new Long(map_id))) {
-				TO.getSharedToMe().add(new Long(map_id));
-			}
+			if(TO.getSharedToMe().contains(new Long(map_id))==false) TO.getSharedToMe().add(new Long(map_id));
 			
 			tx.commit();
 		} finally {
@@ -197,7 +260,37 @@ public class UserRessource implements UserDao {
 	/* DELETE */
 	
 	@DELETE
-	@Path("/removePersonnalMap/{PersonnalMapID}")
+	@Path("/{UserID}/removeMap/{MapID}")
+	//remove a personnal map
+    public boolean removeMap(@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) {
+		boolean carte_perso = true;
+		PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.begin();
+			
+			User u = pm.getObjectById(User.class, user_id);
+			Map m = pm.getObjectById(Map.class, map_id);
+			if(u.getMyMaps().contains(new Long(map_id))) {
+				pm.deletePersistent(m);
+				u.getMyMaps().remove(new Long(map_id));
+			} else {
+				carte_perso = false;
+				u.getSharedToMe().remove(new Long(map_id));
+			}
+			tx.commit();
+		} finally {
+			if (tx.isActive()) tx.rollback();
+			pm.close();
+			pmf.close();
+		}
+		return carte_perso;
+	}
+	
+	
+	@DELETE
+	@Path("/{UserID}/removePersonnalMap/{PersonnalMapID}")
 	//remove a personnal map
     public void removePersonnalMap(@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) {
 		System.out.println("removePersonnalMap");
@@ -208,7 +301,8 @@ public class UserRessource implements UserDao {
 			tx.begin();
 			
 			User u = pm.getObjectById(User.class, user_id);
-			
+			Map m = pm.getObjectById(Map.class, map_id);
+			pm.deletePersistent(m);
 			u.getMyMaps().remove(new Long(map_id));
 			
 			tx.commit();
@@ -220,7 +314,7 @@ public class UserRessource implements UserDao {
 	}
 	
 	@DELETE
-	@Path("/removeSharedMap/{SharedMapID}")
+	@Path("/{UserID}/removeSharedMap/{SharedMapID}")
 	//remove a shared map
     public void removeSharedMap(@PathParam("UserID") int user_id, @PathParam("MapID") int map_id) {
 		System.out.println("removeSharedMap");

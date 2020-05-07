@@ -1,4 +1,6 @@
+/*
 $('#buttonRechercher').click(function(){
+	
 	var temp = _.template($('#templateMapElement').html()); //récupération du template dans le fichier html
 	var resultat = temp({ //ce qu'on affiche dans le code template
 		"indice":"0",
@@ -22,3 +24,5 @@ $('#buttonRechercher').click(function(){
     	console.log("indice 1");
 	}, false);
 });
+
+*/

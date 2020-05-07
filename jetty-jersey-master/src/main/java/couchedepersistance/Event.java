@@ -7,16 +7,16 @@ import javax.jdo.annotations.PersistenceCapable;
 @PersistenceCapable(detachable="true")
 public class Event extends Location {
 
-    private LocalDateTime beginning;
-    private LocalDateTime end;
+    private String beginning;
+    private String end;
     
     public Event(){
         super();
-        this.beginning = LocalDateTime.now();
-        this.end = LocalDateTime.now();
+        this.beginning = LocalDateTime.now().toString();
+        this.end = LocalDateTime.now().toString();
     }
 
-    public Event(String name, String description, String address, LocalDateTime beginning, LocalDateTime end){
+    public Event(String name, String description, String address, String beginning, String end){
         super(name, description, address);
         this.beginning = beginning;
         this.end = end;
@@ -30,19 +30,19 @@ public class Event extends Location {
         super.setId(id);
     }
     
-    public LocalDateTime getBeginning() {
+    public String getBeginning() {
         return beginning;
     }
 
-    public void setBeginning(LocalDateTime beginning) {
+    public void setBeginning(String beginning) {
         this.beginning = beginning;
     }
 
-    public LocalDateTime getEnd() {
+    public String getEnd() {
         return end;
     }
 
-    public void setEnd(LocalDateTime end) {
+    public void setEnd(String end) {
         this.end = end;
     }
     

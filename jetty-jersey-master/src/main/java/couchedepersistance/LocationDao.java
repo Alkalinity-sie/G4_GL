@@ -19,7 +19,7 @@ public interface LocationDao {
     //retrieval of a location's list of labels
     List<String> getLabels (int user_id, int map_id, int location_id);
     //retrieval of a location's list of photos
-    List<ImageIcon> getPhotos (int user_id, int map_id, int location_id);
+    List<Photo> getPhotos (int user_id, int map_id, int location_id);
     
     /* POST */
     
