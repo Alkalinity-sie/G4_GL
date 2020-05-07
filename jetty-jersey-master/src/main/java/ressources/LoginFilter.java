@@ -15,7 +15,7 @@ import org.glassfish.jersey.internal.util.Base64;
 public class LoginFilter implements ContainerRequestFilter{
 	
 	private static final String AUTHORIZATION_HEADER_KEY = "Authorization";
-	private static final String AUTHORIZATION_HEADER_PREFIX = "Basic";
+	private static final String AUTHORIZATION_HEADER_PREFIX = "Basic ";
 	private static final String SECURED_URL_PREFIX = "secured";
 
 	@Override
