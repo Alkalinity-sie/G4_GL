@@ -24,10 +24,14 @@ public class LoginFilter implements ContainerRequestFilter{
 			List<String> authHeader = requestContext.getHeaders().get(AUTHORIZATION_HEADER_KEY);
 			if(authHeader!= null && authHeader.size()>0) {
 				String authToken = authHeader.get(0);
+				System.out.println(authToken);
 				authToken = authToken.replaceFirst(AUTHORIZATION_HEADER_PREFIX, "");
-				String decodedString = Base64.decodeAsString(authToken.getBytes());
+				System.out.println(authToken);
+				String decodedString = new String(Base64.decode(authToken.getBytes()));;
+				System.out.println(decodedString);
 				StringTokenizer tokenizer = new StringTokenizer(decodedString,":");
 				String username = tokenizer.nextToken();
+				System.out.println(username);
 				String password = tokenizer.nextToken();
 				if("user".equals(username) && "password".equals(password)) {
 					return;
