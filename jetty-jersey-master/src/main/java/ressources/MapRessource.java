@@ -471,14 +471,6 @@ public class MapRessource implements MapDao {
     public void removeLocation(@PathParam("UserID")     int user_id, 
     						   @PathParam("MapID")      int map_id, 
     						   @PathParam("LocationID") int location_id) { //OK
-		/*
-		Map m = getMap(user_id, map_id);
-		if(m==null) return;
-		Location l = Database.getLocation(user_id, map_id, location_id);
-		if(l==null) return;
-		m.getMyLocations().remove(l);
-		*/
-		System.out.println("removeLocation");
 		PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
 		PersistenceManager pm = pmf.getPersistenceManager();
 		Transaction tx = pm.currentTransaction();
@@ -506,14 +498,7 @@ public class MapRessource implements MapDao {
     public void removeEvent(@PathParam("UserID")  int user_id,
     					    @PathParam("MapID")   int map_id, 
     					    @PathParam("EventID") int event_id) { //OK
-		/*
-		Map m = getMap(user_id, map_id);
-		if(m==null) return;
-		Location e = Database.getEvent(user_id, map_id, event_id);
-		if(e==null) return;
-		m.getMyLocations().remove(e);
-		*/
-		System.out.println("removeEvent");
+
 		PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
 		PersistenceManager pm = pmf.getPersistenceManager();
 		Transaction tx = pm.currentTransaction();

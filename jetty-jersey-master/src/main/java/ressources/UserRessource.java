@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import couchedepersistance.Map;
 import couchedepersistance.User;
 import couchedepersistance.UserDao;
+
 @Path("/User")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -32,7 +33,7 @@ public class UserRessource implements UserDao {
 	@GET
 	@Path("/{Username}/{Password}/getCorrespondantUser")
 	//get a user
-    public User getCorrespondantUser (@PathParam("Username") String username,
+    public static User getCorrespondantUser (@PathParam("Username") String username,
     								  @PathParam("Password") String password) {
 		System.out.println("getCorrespondantUser");
 		User copy = null;
@@ -204,6 +205,30 @@ public class UserRessource implements UserDao {
 	}
 	
 	/* PUT */
+	
+	@PUT
+	@Path("/addUser")
+    //add a new (empty) personnal map
+	public int addUser () {
+		System.out.println("addUser");
+		int id = -1;
+		PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.begin();
+			
+			User u = pm.makePersistent(new User());
+			id = u.getId().intValue();
+			
+			tx.commit();
+		} finally {
+			if (tx.isActive()) tx.rollback();
+			pm.close();
+			pmf.close();
+		}
+		return id;
+	}
 	
 	@PUT
 	@Path("/{UserID}/addPersonnalMap")

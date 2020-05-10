@@ -9,6 +9,7 @@ var currentMarkerID = 0;
 var markersMAP = [];
 var sidebar_last_clicked = "";
 var photo_a_envoyer;
+
 function ouvreNouvelleCarte() {
 	//ajouter une nouvelle map dans la BDD
 	$.ajax({
@@ -26,42 +27,36 @@ function ouvreNouvelleCarte() {
 }
 
 $(function (){
-		// Let’s create a map of the center of London with pretty Mapbox Streets tiles.
-		// First we’ll initialize the map and set its view to our chosen geographical coordinates and a zoom level
-		map = L.map('mapleflet1').setView([48.866667, 2.333333], 11);
-		L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+	// Let’s create a map of the center of London with pretty Mapbox Streets tiles.
+	// First we’ll initialize the map and set its view to our chosen geographical coordinates and a zoom level
+	map = L.map('mapleflet1').setView([48.866667, 2.333333], 11);
+	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     	maxZoom: 18,
     	id: 'mapbox/streets-v11',
     	tileSize: 512,
     	zoomOffset: -1,
     	accessToken: 'pk.eyJ1IjoibGVkb2RvaW5jb25udSIsImEiOiJjazg3OXNkZWUwZDdiM2VwcmQxbjI0cWczIn0.gsqi-Jp2FZ066BoQ_0IEJQ'
-		}).addTo(map);
+	}).addTo(map);
 
-		map.on('click', onMapClick);
-		L.control.scale().addTo(map);
-		searchControl = L.esri.Geocoding.geosearch().addTo(map);
-		geocodeService = L.esri.Geocoding.geocodeService();
-		//ajout du groupe de marqueur
-		markerGroup = L.layerGroup().addTo(map);
+	map.on('click', onMapClick);
+	L.control.scale().addTo(map);
+	searchControl = L.esri.Geocoding.geosearch().addTo(map);
+	geocodeService = L.esri.Geocoding.geocodeService();
+	//ajout du groupe de marqueur
+	markerGroup = L.layerGroup().addTo(map);
 
-		// RECUPERE MA POS ET PLACE UN MARQUEUR
-		//navigator.geolocation.getCurrentPosition(displayLocation);
-		//var lat = position.coords.latitude;
-    	//var lng = position.coords.longitude;
-		//L.marker([lat, lng]).addTo(markerGroup);
-		/*
-		$.ajax({
-			async: false,
-			type:'GET',
-			dataType:'json',
-			url:'ws/User/Jean/mdp123/getCorrespondantUser/'
-		}).done(function(User){
-			console.log("User:")
-			console.log(User);
-		});
-		*/
-		
+	// RECUPERE MA POS ET PLACE UN MARQUEUR
+	//navigator.geolocation.getCurrentPosition(displayLocation);
+	//var lat = position.coords.latitude;
+    //var lng = position.coords.longitude;
+	//L.marker([lat, lng]).addTo(markerGroup);
+
+	Routing = L.Routing.control({
+			geocoder: L.Control.Geocoder.nominatim(),
+			routeWhileDragging: true,
+			reverseWaypoints: true
+	}).addTo(map);
 
 });
 
@@ -69,7 +64,7 @@ $('#remonter').click(function(){
 	$("html, body").animate({scrollTop : 0}, 550);
 });
 
-function EnableDisableEvent(marker) {
+function EnableDisableEvent() {
 	var node = document.getElementById('Evenement-infos');
 	if (node.style.visibility=="hidden"){
 		node.style.visibility = "visible";
@@ -306,7 +301,6 @@ function mapclick(mapID){
 async function onMapClick(e) {
 	var adresse = await trouveAdresse(e);
 	var last_adresse = adresse;
-	var markerID;
 	//création d'un Event dans la BDD
 	$.ajax({
 		async: false, //pour que on attend la fin de la requete d'abord
@@ -315,9 +309,9 @@ async function onMapClick(e) {
 		url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/addEvent'
 	}).done(function(id){
 		console.log('Nouveau Event ajoutée à la position : '+e.latlng.lat + " / " + e.latlng.lng)
-		markerID = id
+		currentMarkerID = id
 	});
-	ajoutMarqueur(markerID, "", adresse, "", "", "", "", e.latlng.lat, e.latlng.lng, false) 
+	ajoutMarqueur(currentMarkerID, "", adresse, "", "", "", "", e.latlng.lat, e.latlng.lng, false) 
 }
 
 

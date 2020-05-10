@@ -28,6 +28,8 @@ public interface UserDao {
     
     /* PUT */
     
+    //add a new user
+    int addUser ();
     //add a new personnal map
     int addPersonnalMap (int user_id);
     //add a new shared map 

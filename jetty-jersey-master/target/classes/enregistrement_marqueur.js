@@ -3,6 +3,7 @@ function supprimerLocation (markerID){
 	var marker = getMarkerOfID(markerID)
 	console.log("supprimerLocation : marker : "+marker)
 	console.log(markerGroup.removeLayer(marker))
+	/*
 	$.ajax({
 		type:'DELETE',
 		dataType:'json',
@@ -10,12 +11,13 @@ function supprimerLocation (markerID){
 	}).done(function(){
 			console.log('Location supprimée!')
 	});
+	*/
 	$.ajax({
 		type:'DELETE',
 		dataType:'json',
 		url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/removeEvent/'+markerID
 	}).done(function(){
-			console.log('Event supprimée!')
+			console.log('Marqueur supprimée!')
 	});
 }
 
@@ -144,13 +146,6 @@ function ajoutMarqueur(markerID, nom_initiale, adresse_initiale, description_ini
 			   enregistrerLocation(true,`+markerID+`,`+lat+`,`+lng+`, nom, adresse, description, labels, debut, fin); `;
     var temp = _.template($('#templatePopup').html());
    
-    /*
-    var checked = "";
-    if(debut_initiale.length > 0 || end_initiale.length > 0){
-		checked = "checked";
-		EnableDisableEvent();
-	}
-	*/
 	//création du popup
 	var popup = temp({ 
 		"mID":markerID,
@@ -164,16 +159,22 @@ function ajoutMarqueur(markerID, nom_initiale, adresse_initiale, description_ini
 		"end":end_initiale
 	});
 
-    marker.bindPopup(popup).openPopup();
+    marker.bindPopup(popup)
     //on sauvegarde son adresse dès la création du marqueur si ce n'est pas une sauvegarde que l'on place
-    if(isBackup == false){
+    if(isBackup == false){ //si c'est pas une sauvegarde 
+    	console.log("is backup - adresse ")
+		console.log(adresse_initiale)
+		console.log("is backup - lat ")
+		console.log(lat)
+		console.log("is backup - lng ")
+		console.log(lng)
 	    $.ajax({
-	    		async: false,
-				type:'POST',
-				dataType:'text',
-				url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/Event/'+markerID+'/setAddress/'+adresse_initiale+'*'+lat+'*'+lng
-			}).done(function(){
-				console.log('Adresse du Event sauvegardé')
+	    	async: false,
+			type:'POST',
+			dataType:'text',
+			url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/Event/'+markerID+'/setAddress/'+adresse_initiale+'*'+lat+'*'+lng
+		}).done(function(){
+			console.log('Adresse du Event sauvegardé')
 		});
 	}
 
@@ -190,6 +191,7 @@ function ajoutMarqueur(markerID, nom_initiale, adresse_initiale, description_ini
 		var marker_labels = "";
 		var marker_beginning = "";
 		var marker_end = "";
+
 		 $.ajax({
 	    	async: false,
 			type:'GET',
@@ -197,10 +199,10 @@ function ajoutMarqueur(markerID, nom_initiale, adresse_initiale, description_ini
 			url:'ws/User/'+currentUserID+'/Map/'+currentMapID+'/Event/'+ID+'/getEvent'
 		}).done(function(event){
 			console.log('Récupération du marqueur!')
-			console.log(event)
 			marker_nom = event.name;
 			marker_description = event.description;
-			marker_adresse = event.address;
+			var a = event.address.split("*")
+			marker_adresse = a[0]
 			for(var i = 0; i < event.labels.length; i++){
 				marker_labels += event.labels[i] + " ";
 			}
@@ -219,6 +221,7 @@ function ajoutMarqueur(markerID, nom_initiale, adresse_initiale, description_ini
 			console.log('Récupération de beginning du marqueur!')
 			console.log(beginning)//2020-05-02T03:45
 			marker_beginning = beginning
+
 			if(beginning.length > 16){
 				marker_beginning = beginning.substring(0, 16)
 			}
@@ -238,8 +241,6 @@ function ajoutMarqueur(markerID, nom_initiale, adresse_initiale, description_ini
 				marker_end = end.substring(0, 16)
 			}
 		});
-
-		console.log("marker_labels : "+marker_labels)
 
 		var code =`var nom = document.getElementById('nom`+markerID+`').value;
 			       var adresse = document.getElementById('adresse`+markerID+`').value;
@@ -262,7 +263,18 @@ function ajoutMarqueur(markerID, nom_initiale, adresse_initiale, description_ini
 			"beginning":marker_beginning,
 			"end":marker_end
 		});
+
 	   	marker._popup.setContent(popup)
+
+	   	if(marker_beginning.length > 0 || marker_end.length > 0){
+			console.log("oui");
+	   		var doc = new DOMParser().parseFromString(marker.getPopup().getContent(), "text/html")
+			//doc.getElementById("popupIsEvent"+ID).click();
+			console.log(doc)
+			console.log(doc.getElementById("popupIsEvent"+ID))
+			doc.getElementById("popupIsEvent"+ID).checked = true;
+			EnableDisableEvent();
+		}
 	});
     markersMAP.push([markerID, marker]);
 }

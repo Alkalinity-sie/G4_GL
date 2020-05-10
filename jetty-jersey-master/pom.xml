@@ -27,6 +27,7 @@
 	<dependencies>
 
 		<!-- Jetty -->
+		<Set name="headerBufferSize">65536</Set>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>

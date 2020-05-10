@@ -1,8 +1,7 @@
 package ressources;
 
-import couchedepersistance.Map;
+
 import couchedepersistance.Photo;
-import couchedepersistance.User;
 import couchedepersistance.Event;
 import couchedepersistance.EventDao;
 
@@ -35,10 +34,7 @@ public class EventRessource implements EventDao {
 				@PathParam("UserID")  int user_id, 
 	    		@PathParam("MapID")   int map_id, 
 	    		@PathParam("EventID") int event_id) {
-			/*
-			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
-			return e;
-			*/
+
 			return Database.getEvent(user_id, map_id, event_id);
 			
 		}
@@ -71,11 +67,6 @@ public class EventRessource implements EventDao {
 	    		@PathParam("UserID")  int user_id, 
 	    		@PathParam("MapID")   int map_id, 
 	    		@PathParam("EventID") int event_id) {
-			/*
-			Event e = (Event) Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return null;
-			return e.getName();
-			*/
 			Event e = Database.getEvent(user_id, map_id, event_id);
 			if(e == null) return "null";
 			return e.getName();
@@ -122,24 +113,13 @@ public class EventRessource implements EventDao {
 		
 		@GET
 		@Path("/getPhotos")
-	    //retrieval of a location's list of photos
+	    //retrieval of an event's list of photo ID
 	    public List<Long> getPhotos (
 	    		@PathParam("UserID")     int user_id, 
 	    		@PathParam("MapID")      int map_id, 
 	    		@PathParam("EventID")    int event_id){
 			Event e = Database.getEvent(user_id, map_id, event_id);
 			if(e == null) return null;
-			/*
-			List<Photo> res = new ArrayList<>();
-			for(Long pid : e.getPhotos()){
-				Photo p = Database.getPhoto(user_id, map_id, event_id, pid.intValue());
-				res.add(p);
-			}
-			System.out.println("taille de la liste de photos : "+res.size());
-			for(int i = 0; i < res.size(); i++) {
-				if(res.get(i)!=null) System.out.println(res.get(i).getId().intValue());
-				else System.out.println("null");
-			}*/
 			List<Long> res = new ArrayList<>();
 			for(Long pid : e.getPhotos()){
 				res.add(new Long(pid.intValue()));
@@ -149,24 +129,23 @@ public class EventRessource implements EventDao {
 		
 		@GET
 		@Path("/getPhoto/{PhotoID}/{indexDebut}/{indexFin}")
-	    public String getPhotos (
+	    public String getPhoto (
 	    		@PathParam("UserID")     int user_id, 
 	    		@PathParam("MapID")      int map_id, 
 	    		@PathParam("EventID")    int event_id,
 	    		@PathParam("PhotoID")    int photo_id,
 	    		@PathParam("indexDebut") int indexDebut,
 	    		@PathParam("indexFin")   int indexFin){
-			Event e = Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return null;
 			
 			Photo p = Database.getPhoto(user_id, map_id, event_id, photo_id);
-			
+			/*
 			if(indexDebut==-1 && indexFin==-1) {
-				int taille = p.getPhoto().length();
 				return p.getPhoto().length()+"";
 			}
 			String res = p.getPhoto().substring(indexDebut, indexFin);
-			System.out.println(res.substring(0, 30));
+			*/
+			if(p==null) return "photo null";
+			String res = p.getPhoto();
 			return res;
 	    }
 		
@@ -282,39 +261,14 @@ public class EventRessource implements EventDao {
 	    		@PathParam("MapID")      int map_id, 
 	    		@PathParam("EventID")    int event_id, 
 	    		@PathParam("Name")       String name) {
-	    	/*
-	    	Event e = (Event) Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return;
-			e.setName(name);
-			*/
-	    	System.out.println("setName");
-	    	
 	    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
 			PersistenceManager pm = pmf.getPersistenceManager();
 			Transaction tx = pm.currentTransaction();
 			try {
 				tx.begin();
 				
-				User u = pm.getObjectById(User.class, user_id);
-				
-				//on regarde si map_id appartient à user_id
-				boolean found = false;
-				for(Long mid : u.getMyMaps()) {
-					if(mid.intValue() == map_id) {
-						found = true;
-					}
-				}
-				
-				if(found == true) {
-					Map m = pm.getObjectById(Map.class, map_id);
-					//on regarde si event_id appartient à map_id
-					for(Long eid : m.getMyEvents()) {
-						if(eid.intValue() == event_id) {
-							Event event = pm.getObjectById(Event.class, event_id);
-							event.setName(name);
-						}
-					}
-				}
+				Event event = pm.getObjectById(Event.class, event_id);
+				event.setName(name);
 				
 				tx.commit();
 			} finally {
@@ -332,38 +286,14 @@ public class EventRessource implements EventDao {
 	    		@PathParam("MapID")       int map_id, 
 	    		@PathParam("EventID")     int event_id, 
 	    		@PathParam("Description") String description) {
-	    	/*
-	    	Event e = (Event) Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return;
-			e.setDescription(description);
-			*/
-	    	
 	    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
 			PersistenceManager pm = pmf.getPersistenceManager();
 			Transaction tx = pm.currentTransaction();
 			try {
 				tx.begin();
 				
-				User u = pm.getObjectById(User.class, user_id);
-				
-				//on regarde si map_id appartient à user_id
-				boolean found = false;
-				for(Long mid : u.getMyMaps()) {
-					if(mid.intValue() == map_id) {
-						found = true;
-					}
-				}
-				
-				if(found == true) {
-					Map m = pm.getObjectById(Map.class, map_id);
-					//on regarde si event_id appartient à map_id
-					for(Long eid : m.getMyEvents()) {
-						if(eid.intValue() == event_id) {
-							Event event = pm.getObjectById(Event.class, event_id);
-							event.setDescription(description);
-						}
-					}
-				}
+				Event event = pm.getObjectById(Event.class, event_id);
+				event.setDescription(description);
 				
 				tx.commit();
 			} finally {
@@ -381,38 +311,14 @@ public class EventRessource implements EventDao {
 	    		@PathParam("MapID")   int map_id, 
 	    		@PathParam("EventID") int event_id, 
 	    		@PathParam("Address") String address) {
-	    	/*
-	    	Event e = (Event) Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return;
-			e.setaddress(address);
-	    	*/
-	    	
 	    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
 			PersistenceManager pm = pmf.getPersistenceManager();
 			Transaction tx = pm.currentTransaction();
 			try {
 				tx.begin();
 				
-				User u = pm.getObjectById(User.class, user_id);
-				
-				//on regarde si map_id appartient à user_id
-				boolean found = false;
-				for(Long mid : u.getMyMaps()) {
-					if(mid.intValue() == map_id) {
-						found = true;
-					}
-				}
-				
-				if(found == true) {
-					Map m = pm.getObjectById(Map.class, map_id);
-					//on regarde si event_id appartient à map_id
-					for(Long eid : m.getMyEvents()) {
-						if(eid.intValue() == event_id) {
-							Event event = pm.getObjectById(Event.class, event_id);
-							event.setAddress(address);
-						}
-					}
-				}
+				Event event = pm.getObjectById(Event.class, event_id);
+				event.setAddress(address);
 				
 				tx.commit();
 			} finally {
@@ -438,31 +344,12 @@ public class EventRessource implements EventDao {
 			try {
 				tx.begin();
 				
-				User u = pm.getObjectById(User.class, user_id);
-				
 				String labels[] = text.split(" ");
 				
-				//on regarde si map_id appartient à user_id
-				boolean found = false;
-				for(Long mid : u.getMyMaps()) {
-					if(mid.intValue() == map_id) {
-						found = true;
-					}
-				}
-				
-				if(found == true) {
-					Map m = pm.getObjectById(Map.class, map_id);
-					//on regarde si location_id appartient à map_id
-					for(Long eid : m.getMyEvents()) {
-						if(eid.intValue() == event_id) {
-							Event event = pm.getObjectById(Event.class, event_id);
-							event.setLabels(new ArrayList<String>());
-							for(int i = 0; i < labels.length; i++) {
-								event.getLabels().add(labels[i]);
-							}
-						}
-					}
-				}
+				Event event = pm.getObjectById(Event.class, event_id);
+				event.setLabels(new ArrayList<String>());
+				for(int i = 0; i < labels.length; i++) event.getLabels().add(labels[i]);
+							
 				
 				tx.commit();
 			} finally {
@@ -480,39 +367,15 @@ public class EventRessource implements EventDao {
 	    		@PathParam("MapID")   int map_id, 
 	    		@PathParam("EventID") int event_id, 
 	    		@PathParam("Label")   String label) {
-	    	/*
-	    	Event e = (Event) Database.getEvent(user_id, map_id, event_id);
-			if(e == null) return;
-			e.getLabels().add(label);
-			*/
-	    	
+
 	    	PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
 			PersistenceManager pm = pmf.getPersistenceManager();
 			Transaction tx = pm.currentTransaction();
 			try {
 				tx.begin();
 				
-				User u = pm.getObjectById(User.class, user_id);
-				
-				//on regarde si map_id appartient à user_id
-				boolean found = false;
-				for(Long mid : u.getMyMaps()) {
-					if(mid.intValue() == map_id) {
-						found = true;
-					}
-				}
-				
-				if(found == true) {
-					Map m = pm.getObjectById(Map.class, map_id);
-					//on regarde si location_id appartient à map_id
-					for(Long eid : m.getMyEvents()) {
-						if(eid.intValue() == event_id) {
-							Event event = pm.getObjectById(Event.class, event_id);
-							event.getLabels().add(label);
-						}
-					}
-				}
-				
+				Event event = pm.getObjectById(Event.class, event_id);
+				event.getLabels().add(label);
 				tx.commit();
 			} finally {
 				if (tx.isActive()) tx.rollback();
@@ -536,29 +399,12 @@ public class EventRessource implements EventDao {
 			try {
 				tx.begin();
 				
-				User u = pm.getObjectById(User.class, user_id);
+				Event event = pm.getObjectById(Event.class, event_id);
+				Photo n = new Photo(); n.setPhoto(photo);
+				Photo nouvelle = pm.makePersistent(n);
+				id = nouvelle.getId().intValue();
+				event.getPhotos().add(new Long(id));
 				
-				//on regarde si map_id appartient à user_id
-				boolean found = false;
-				for(Long mid : u.getMyMaps()) {
-					if(mid.intValue() == map_id) {
-						found = true;
-					}
-				}
-				
-				if(found == true) {
-					Map m = pm.getObjectById(Map.class, map_id);
-					//on regarde si location_id appartient à map_id
-					for(Long eid : m.getMyEvents()) {
-						if(eid.intValue() == event_id) {
-							Event event = pm.getObjectById(Event.class, event_id);
-							Photo n = new Photo(); n.setPhoto(photo);
-							Photo nouvelle = pm.makePersistent(n);
-							id = nouvelle.getId().intValue();
-							event.getPhotos().add(new Long(id));
-						}
-					}
-				}
 				tx.commit();
 			} finally {
 				if (tx.isActive()) tx.rollback();
@@ -588,26 +434,8 @@ public class EventRessource implements EventDao {
 			try {
 				tx.begin();
 				
-				User u = pm.getObjectById(User.class, user_id);
-				
-				//on regarde si map_id appartient à user_id
-				boolean found = false;
-				for(Long mid : u.getMyMaps()) {
-					if(mid.intValue() == map_id) {
-						found = true;
-					}
-				}
-				
-				if(found == true) {
-					Map m = pm.getObjectById(Map.class, map_id);
-					//on regarde si location_id appartient à map_id
-					for(Long eid : m.getMyEvents()) {
-						if(eid.intValue() == event_id) {
-							Event event = pm.getObjectById(Event.class, event_id);
-							event.getLabels().remove(label);
-						}
-					}
-				}
+				Event event = pm.getObjectById(Event.class, event_id);
+				event.getLabels().remove(label);
 				
 				tx.commit();
 			} finally {
@@ -632,29 +460,10 @@ public class EventRessource implements EventDao {
 			try {
 				tx.begin();
 				
-				User u = pm.getObjectById(User.class, user_id);
-				
-				//on regarde si map_id appartient à user_id
-				boolean found = false;
-				for(Long mid : u.getMyMaps()) {
-					if(mid.intValue() == map_id) {
-						found = true;
-					}
-				}
-				
-				if(found == true) {
-					Map m = pm.getObjectById(Map.class, map_id);
-					//on regarde si location_id appartient à map_id
-					for(Long eid : m.getMyEvents()) {
-						if(eid.intValue() == event_id) {
-							Event event = pm.getObjectById(Event.class, event_id);
-							for(Long pid : event.getPhotos()) {
-								if(pid.intValue() == photo_id) {
-									event.getPhotos().remove(pid);
-									break;
-								}
-							}
-						}
+				Event event = pm.getObjectById(Event.class, event_id);
+				for(Long pid : event.getPhotos()) {
+					if(pid.intValue() == photo_id) {
+						event.getPhotos().remove(pid);
 					}
 				}
 				
