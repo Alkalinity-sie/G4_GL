@@ -10,6 +10,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
 import org.glassfish.jersey.internal.util.Base64;
+import couchedepersistance.User;
+
 
 @Provider
 public class LoginFilter implements ContainerRequestFilter{
@@ -33,7 +35,10 @@ public class LoginFilter implements ContainerRequestFilter{
 				String username = tokenizer.nextToken();
 				System.out.println(username);
 				String password = tokenizer.nextToken();
-				if("user".equals(username) && "password".equals(password)) {
+				
+				
+				//if("user".equals(username) && "password".equals(password)) {
+				if(userExist(username,password)) {
 					return;
 				}
 			}
@@ -46,5 +51,13 @@ public class LoginFilter implements ContainerRequestFilter{
 		
 		}
 	}
+	public boolean userExist(String username, String password) {
+		User user = UserRessource.getCorrespondantUser(username, password);
+		if (user == null) {
+		return false;
+		}
+		else {
+			return true;
+		}
+	}
 }	
-	
