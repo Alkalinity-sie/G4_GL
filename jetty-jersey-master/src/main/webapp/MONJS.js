@@ -58,11 +58,19 @@ $(function (){
 			reverseWaypoints: true
 	}).addTo(map);
 
+
+
 });
+
+function deconnexion (){
+	window.location = 'http://localhost:8080/login.html'
+}
 
 $('#remonter').click(function(){
 	$("html, body").animate({scrollTop : 0}, 550);
 });
+
+
 
 function EnableDisableEvent() {
 	var node = document.getElementById('Evenement-infos');

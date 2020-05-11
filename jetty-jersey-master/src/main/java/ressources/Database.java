@@ -406,7 +406,6 @@ public class Database {
 			tx.begin();
 					
 			Event e = pm.getObjectById(Event.class, event_id);
-			System.out.println("database : "+e.getBeginning().toString());
 			copy = Copy.copyEvent(e);
 					
 			tx.commit();

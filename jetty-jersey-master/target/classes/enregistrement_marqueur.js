@@ -266,15 +266,6 @@ function ajoutMarqueur(markerID, nom_initiale, adresse_initiale, description_ini
 
 	   	marker._popup.setContent(popup)
 
-	   	if(marker_beginning.length > 0 || marker_end.length > 0){
-			console.log("oui");
-	   		var doc = new DOMParser().parseFromString(marker.getPopup().getContent(), "text/html")
-			//doc.getElementById("popupIsEvent"+ID).click();
-			console.log(doc)
-			console.log(doc.getElementById("popupIsEvent"+ID))
-			doc.getElementById("popupIsEvent"+ID).checked = true;
-			EnableDisableEvent();
-		}
 	});
     markersMAP.push([markerID, marker]);
 }

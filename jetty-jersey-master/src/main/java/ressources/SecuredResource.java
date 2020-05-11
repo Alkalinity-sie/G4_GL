@@ -31,7 +31,7 @@ public class SecuredResource {
 		StringTokenizer tokenizer = new StringTokenizer(decodedString,":");
 		String username = tokenizer.nextToken();
 		System.out.println(username);
-		String password = tokenizer.nextToken();
+		//String password = tokenizer.nextToken();
 		return UserRessource.getUserId(username);
 	}
 

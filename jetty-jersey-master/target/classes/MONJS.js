@@ -3,7 +3,7 @@ var markerGroup; //contient les marqueurs de la map dans la BDD avec l'id : curr
 var geocodeService;
 var searchControl;
 var last_adresse;//adresse de là où on a cliqué pour la dernière fois
-var currentUserID = 0;
+var currentUserID = localStorage.getItem("ID");
 var currentMapID = 0;
 var currentMarkerID = 0;
 var markersMAP = [];
@@ -58,11 +58,19 @@ $(function (){
 			reverseWaypoints: true
 	}).addTo(map);
 
+
+
 });
+
+function deconnexion (){
+	window.location = 'http://localhost:8080/login.html'
+}
 
 $('#remonter').click(function(){
 	$("html, body").animate({scrollTop : 0}, 550);
 });
+
+
 
 function EnableDisableEvent() {
 	var node = document.getElementById('Evenement-infos');

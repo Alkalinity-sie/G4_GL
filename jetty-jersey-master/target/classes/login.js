@@ -22,53 +22,42 @@ function getServerData(type,url,success){
 
 }
 
-function Success(ID){
-	localStorage.setItem("ID",ID);
-	window.location = 'http://localhost:8080/home.html';
-	 
-}
-
-function MonPage(Res){
-	window.location = 'http://localhost:8080/home.html';
+function Success(e, ID){
+	window.location = 'http://localhost:8080/home.html'
+	currentUserID = ID;
 }
 
 function failed(){
 	var templateExample = _.template($('#templateError').html());
 	var html = templateExample({});
-
 	$("#error").html(html);
 }
 
 function NewUser(ID){
-	localStorage.setItem("ID",ID);
-	getServerData('POST', '/ws/User/'+ID+'/setUsername/'+username,(function(){}));
-	getServerData('POST', '/ws/User/'+ID+'/setPassword/'+password, MonPage);
-
-}
-function ifUser(Response){
-	if(JSON.stringify(Response) == -1){
-		getServerData('PUT','/ws/User/addUser',NewUser);
-	}
-	else{
+	if(ID ==-1){
 		var templateExample = _.template($('#templateErrorSignup').html());
 		var html = templateExample({});
-
 		$("#error").html(html);
 	}
-	
+	else{
+		getServerData('POST', 'http://localhost:8080/ws/User/'+ID+'/setUsername/'+username,(function(){}));
+		getServerData('POST', 'http://localhost:8080/ws/User/'+ID+'/setPassword/'+password, function (e, ID){
+			window.location = 'http://localhost:8080/home.html'
+			currentUserID = ID;
+		});
+	}
 }
 
 $(function (){
 	$('#login').click(function(){
 		username = $('input[name="Username"]').val();
 		password = $('input[name="Password"]').val();
-		Authentification('GET', '/ws/secured/message', username,password,window.Success, failed);
+		Authentification('GET', 'http://localhost:8080/ws/secured/message', username,password,Success, failed);
 	});
 	$('#signUp').click(function(){
 		username = $('input[name="Username"]').val();
 		password = $('input[name="Password"]').val();
-		getServerData('GET', 'ws/User/'+username+'/getUserID', ifUser);
-		
+		getServerData('PUT','http://localhost:8080/ws/User/addUser',NewUser);
 
 	});
 });

@@ -84,8 +84,6 @@ public class Copy {
 		for(Long l : e.getPhotos()) photosCopy.add(new Long(l.intValue()));
 		copy.setPhotos(photosCopy);
 		
-		System.out.println("debut : "+copy.getBeginning().toString());
-		System.out.println("fin : "+copy.getEnd().toString());
 		return copy;
 	}
 	

@@ -3,9 +3,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-
   </head>
-
 	<body>
 		
     <!------------------------------------------------------------------------------------------------------------------------------------------->
@@ -52,15 +50,7 @@
         <!--<form action="/action_page.php">-->
         <input id="file_chooser" type="file" onchange="encodeImageFileAsURL(this)">
         <button id="valider" >Valider</button><br/>
-        <!--</form><br/>-->
-        <!--
-        <img class="img" src="coffee.png" width="300" height="300">
-        <button id="supprimerPhoto" onclick="supprimerPhoto(0, 1)">Supprimer la photo</button> 
-        -->
-        <figure class='frame'>
-          <!--<figcaption>Image 1</figcaption>-->
-
-        </figure>
+        <figure class='frame'></figure>
 
       </div>
     </div>
@@ -72,7 +62,7 @@
     </div>
 
     <button id="buttonRechercher">Rechercher</button>
-    <button class="deconnection">Se deconnecter</button>
+    <button class="deconnection" onclick="deconnexion()">Se deconnecter</button>
     <!-- INFO BUTTON -->
     <a class="info" onclick="afficheFenetreMapInfo()" data-toggle="popover">Info</a>
 
@@ -189,7 +179,6 @@
     <!---------- MONJS  ---------->                       <script type="text/javascript" src="MONJS.js"></script>
     <!---------- enregistrement_marqueur.js  ---------->  <script type="text/javascript" src="enregistrement_marqueur.js"></script>
     <!---------- galerie  ---------->                     <script type="text/javascript" src="galerie.js"></script>
-    <!---------- liste.js  ---------->                    <script type="text/javascript" src="liste.js"></script>
     <!---------- MONCSS ---------->                       <link rel="stylesheet" type="text/css" href="MONCSS.css">
     <!---------- liste.css ---------->                    <link rel="stylesheet" type="text/css" href="liste.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />

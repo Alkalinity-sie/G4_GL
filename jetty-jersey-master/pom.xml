@@ -3,7 +3,7 @@
 	<groupId>com.example</groupId>
 	<artifactId>jetty-jersey</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	
+	<Set name="headerBufferSize">65536</Set>
 	<repositories>
 		<repository>
 			<id>DN_M2_Repo</id>
@@ -27,7 +27,7 @@
 	<dependencies>
 
 		<!-- Jetty -->
-		<Set name="headerBufferSize">65536</Set>
+		
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>

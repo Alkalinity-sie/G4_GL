@@ -95,6 +95,7 @@ public class UserRessource implements UserDao {
     	return user_id;
     }
 	
+	@SuppressWarnings("unchecked")
 	public static int getUserId(String username) {
 		
 		System.out.println("getUserID");
