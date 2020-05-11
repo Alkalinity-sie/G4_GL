@@ -3,7 +3,7 @@ var markerGroup; //contient les marqueurs de la map dans la BDD avec l'id : curr
 var geocodeService;
 var searchControl;
 var last_adresse;//adresse de là où on a cliqué pour la dernière fois
-var currentUserID = 0;
+var currentUserID = localStorage.getItem("ID");
 var currentMapID = 0;
 var currentMarkerID = 0;
 var markersMAP = [];
