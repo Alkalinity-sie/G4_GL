@@ -4,7 +4,6 @@
   <head>
     <meta charset="utf-8">
   </head>
-
 	<body>
 		
     <!------------------------------------------------------------------------------------------------------------------------------------------->
@@ -41,6 +40,29 @@
       </div>
     </div>
 
+    <!-- GALERIE -->
+    <div class="galerie-modal">
+      <div class="galerie-content">
+        <div class="galerie-close" onclick="fermerGalerie()">+</div>
+        <div class="galerie-titre" style="font-size:20px;">Galerie</div><br/>
+        <div class="galerie-ajout-text">Ajouter une image</div><br/>
+
+        <!--<form action="/action_page.php">-->
+        <input id="file_chooser" type="file" onchange="encodeImageFileAsURL(this)">
+        <button id="valider" >Valider</button><br/>
+        <!--</form><br/>-->
+        <!--
+        <img class="img" src="coffee.png" width="300" height="300">
+        <button id="supprimerPhoto" onclick="supprimerPhoto(0, 1)">Supprimer la photo</button> 
+        -->
+        <figure class='frame'>
+          <!--<figcaption>Image 1</figcaption>-->
+
+        </figure>
+
+      </div>
+    </div>
+
     <!-- BARRE DE RECHERCHE -->
     <div class="topnav">
       <input id="mapSearchBar" type="text" placeholder="Rechercher de nouvelles cartes...">
@@ -48,7 +70,7 @@
     </div>
 
     <button id="buttonRechercher">Rechercher</button>
-    <button class="deconnection">Se deconnecter</button>
+    <button class="deconnection" onclick="deconnexion()">Se deconnecter</button>
     <!-- INFO BUTTON -->
     <a class="info" onclick="afficheFenetreMapInfo()" data-toggle="popover">Info</a>
 
@@ -75,26 +97,22 @@
     <!-- liste des cartes -->
     <div class="center-liste"></div>
 
+    <script id="templateButton" type="text/template">
+      <button id="supprimerPhoto" onclick="supprimerPhoto(<%=markerID%>, <%=photoID%>)">Supprimer la photo</button>
+    </script>
+
     <script id="templateMapElement" type="text/template">
       <div class="map-element indice<%= indice %>">
         <img class="text map-img" src="map.png" alt="">
-        <div class="text map-proprietaire">Propriétaire : <%= proprietaire %></div>
+        <button class="text map-ajouter" onclick="mapclick(<%= indice %>); ajouterLaMap()">Ajouter</button>
         <div class="text map-nom">Nom : <%= nom %></div>
         <div class="text map-description">Description : <%= description %></div>
-        <div class="text map-labels">
-          <div class="text label"></div>
-          <div class="text label"></div>
-          <div class="text label"></div>
-          <div class="text label"></div>
-          <div class="text label"></div>
-          <div class="text label"></div>
-          <div class="text label"></div>
-          <div class="text label"></div>
-          <div class="text label"></div>
-          <div class="text label"></div>
-          <div class="text label"></div>
-        </div>
+        <div class="text map-labels"></div>
       </div>
+    </script>
+
+    <script id="templateLabel" type="text/template">
+      <div class="label"> <%= contenu %> </div>
     </script>
     <script id="templatePopup" type="text/template">
       <div id="popup">
@@ -105,29 +123,29 @@
           <button id="saveButton" onclick="<%=code%>">Enregistrer</button>
           <button id="supprimerButton" onclick="supprimerLocation(<%=markerID%>)">Supprimer</button><br/></br>
           Nom <br/>      
-          <input id="nom" style="width: 171px;" value='<%=nom%>'><br/>
+          <input id="nom<%=markerID%>" style="width: 171px;" value='<%=nom%>'><br/>
           Adresse <br/>      
-          <input id="adresse" style="width: 171px;" value='<%=adresse%>'><br/>
+          <input id="adresse<%=markerID%>" style="width: 171px;" value='<%=adresse%>'><br/>
           Description <br/>
-          <textarea id="description" style="resize: none; width: 173px; height: 60px; border:1px solid #C2C6C9;"><%=description%></textarea><br/>
+          <textarea id="description<%=markerID%>" style="resize: none; width: 173px; height: 60px; border:1px solid #C2C6C9;"><%=description%></textarea><br/>
           Labels <br/>      
-          <input id="labels" style="width: 171px;"><br/>
+          <input id="labels<%=markerID%>" style="width: 171px;" value='<%=labels%>'><br/>
           Photos <br/>    
-          <input id="photos" style="width: 171px;"><br/>
+          <a id="galerie" href="#" onclick="afficheGalerie(<%=markerID%>)">Voir la galerie</a><br/>
           <br/>
           <b>Evenement &emsp;</b> 
           <!-- SWITCH -->
           <label class="switch">
-            <input type="checkbox" onclick="EnableDisableEvent()">
+            <input id="popupIsEvent<%=markerID%>" type="checkbox" onclick="EnableDisableEvent()">
             <span class="slider round"></span>
           </label>
           <br/> 
           <!-- FIN SWITCH -->
           <div style="visibility:hidden;" id="Evenement-infos">
             <div id="debutText" type = "hidden"> Debut </div>
-            <input id="debutInput" type="datetime-local" ><br/> 
+            <input id="debutInput<%=markerID%>" type="datetime-local" value='<%=beginning%>'><br/> 
             <div id="finText"> Fin </div>
-            <input id="finInput" type="datetime-local" ><br/> 
+            <input id="finInput<%=markerID%>" type="datetime-local" value='<%=end%>'><br/> 
           </div>
       </div>
     </script>
@@ -136,37 +154,46 @@
     <!---------------------------------------------------------   PARTIE RESSOURCES ------------------------------------------------------------->
     <!------------------------------------------------------------------------------------------------------------------------------------------->
 
+
+
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
     
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 
+    <!-- MAP -->
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
       integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-      crossorigin=""></script>
-      <!-- Esri pour la recherche de lieux-->
-    <script src="https://unpkg.com/esri-leaflet@2.3.3/dist/esri-leaflet.js"
-      integrity="sha512-cMQ5e58BDuu1pr9BQ/eGRn6HaR6Olh0ofcHFWe5XesdCITVuSBiBZZbhCijBe5ya238f/zMMRYIMIIg1jxv4sQ=="
-      crossorigin=""></script>
-      
-    <script src="https://unpkg.com/esri-leaflet-geocoder@2.3.2/dist/esri-leaflet-geocoder.js"
-      integrity="sha512-8twnXcrOGP3WfMvjB0jS5pNigFuIWj4ALwWEgxhZ+mxvjF5/FBPVd5uAxqT8dd2kUmTVK9+yQJ4CmTmSg/sXAQ=="
       crossorigin=""></script>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
       integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
       crossorigin=""/>
 
+    <!-- Esri pour la recherche de lieux-->
+    <script src="https://unpkg.com/esri-leaflet@2.3.3/dist/esri-leaflet.js"
+      integrity="sha512-cMQ5e58BDuu1pr9BQ/eGRn6HaR6Olh0ofcHFWe5XesdCITVuSBiBZZbhCijBe5ya238f/zMMRYIMIIg1jxv4sQ=="
+      crossorigin=""></script>
+
     <!-- Geocoding  -->
+
+    <script src="https://unpkg.com/esri-leaflet-geocoder@2.3.2/dist/esri-leaflet-geocoder.js"
+      integrity="sha512-8twnXcrOGP3WfMvjB0jS5pNigFuIWj4ALwWEgxhZ+mxvjF5/FBPVd5uAxqT8dd2kUmTVK9+yQJ4CmTmSg/sXAQ=="
+      crossorigin=""></script>
+
     <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.3.2/dist/esri-leaflet-geocoder.css"
       integrity="sha512-IM3Hs+feyi40yZhDH6kV8vQMg4Fh20s9OzInIIAc4nx7aMYMfo+IenRUekoYsHZqGkREUgx0VvlEsgm7nCDW9g=="
       crossorigin="">
 
-    <!---------- MONJS  ---------->        <script type="text/javascript" src="MONJS.js"></script>
-    <!---------- recherche.js  ---------- <script type="text/javascript" src="recherche.js"></script> -->
-    <!---------- liste.js  ---------->     <script type="text/javascript" src="liste.js"></script>
-    <!---------- MONCSS ---------->        <link rel="stylesheet" type="text/css" href="MONCSS.css">
-    <!---------- recherche.css ---------- <link rel="stylesheet" type="text/css" href="recherche.css"> -->
-    <!---------- liste.css ---------->     <link rel="stylesheet" type="text/css" href="liste.css">
+    <!---------- MONJS  ---------->                       <script type="text/javascript" src="MONJS.js"></script>
+    <!---------- enregistrement_marqueur.js  ---------->  <script type="text/javascript" src="enregistrement_marqueur.js"></script>
+    <!---------- galerie  ---------->                     <script type="text/javascript" src="galerie.js"></script>
+    <!---------- liste.js  ---------->                    <script type="text/javascript" src="liste.js"></script>
+    <!---------- MONCSS ---------->                       <link rel="stylesheet" type="text/css" href="MONCSS.css">
+    <!---------- liste.css ---------->                    <link rel="stylesheet" type="text/css" href="liste.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
 	</body>
   </html>

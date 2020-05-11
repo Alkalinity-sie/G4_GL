@@ -22,14 +22,14 @@ function getServerData(type,url,success){
 
 }
 
-function Success(e){
-	window.location = 'http://localhost:8081/'
+function Success(e, ID){
+	window.location = 'http://localhost:8080/home.html'
+	currentUserID = ID;
 }
 
 function failed(){
 	var templateExample = _.template($('#templateError').html());
 	var html = templateExample({});
-
 	$("#error").html(html);
 }
 
@@ -40,9 +40,11 @@ function NewUser(ID){
 		$("#error").html(html);
 	}
 	else{
-		getServerData('POST', 'http://localhost:8081/ws/User/'+ID+'/setUsername/'+username,(function(){}));
-		getServerData('POST', 'http://localhost:8081/ws/User/'+ID+'/setPassword/'+password, Success);
-
+		getServerData('POST', 'http://localhost:8080/ws/User/'+ID+'/setUsername/'+username,(function(){}));
+		getServerData('POST', 'http://localhost:8080/ws/User/'+ID+'/setPassword/'+password, function (e, ID){
+			window.location = 'http://localhost:8080/home.html'
+			currentUserID = ID;
+		});
 	}
 }
 
@@ -50,12 +52,12 @@ $(function (){
 	$('#login').click(function(){
 		username = $('input[name="Username"]').val();
 		password = $('input[name="Password"]').val();
-		Authentification('GET', 'http://localhost:8081/ws/secured/message', username,password,Success, failed);
+		Authentification('GET', 'http://localhost:8080/ws/secured/message', username,password,Success, failed);
 	});
 	$('#signUp').click(function(){
 		username = $('input[name="Username"]').val();
 		password = $('input[name="Password"]').val();
-		getServerData('PUT','http://localhost:8081/ws/User/addUser',NewUser);
+		getServerData('PUT','http://localhost:8080/ws/User/addUser',NewUser);
 
 	});
 });
