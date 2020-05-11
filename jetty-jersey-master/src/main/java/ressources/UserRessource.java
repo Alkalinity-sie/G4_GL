@@ -95,6 +95,32 @@ public class UserRessource implements UserDao {
     	return user_id;
     }
 	
+	public static int getUserId(String username) {
+		
+		System.out.println("getUserID");
+		int user_id = -1;
+		PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("Example");
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try {
+			tx.begin();
+			
+			List<User> users = new ArrayList<User>();
+			Query q = pm.newQuery(User.class);
+			q.declareParameters("String user");
+			q.setFilter("username == user");
+
+			users = (List<User>) q.execute(username);
+			if(users.size()>0) user_id = users.get(0).getId().intValue();
+			
+			tx.commit();
+		} finally {
+			if (tx.isActive()) tx.rollback();
+			pm.close();
+			pmf.close();
+		}
+    	return user_id;
+	}
 	
 	@GET
 	@Path("/{UserID}/getUser")
