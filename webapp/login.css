@@ -1,5 +1,8 @@
 body{
-    background: #bbdefb;
+    background:linear-gradient(60deg, #E8E7EA, #8033FF);
+	 font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+	 color:orange;
+	 font-size:1.4em ;
 }
 #container{
     width:500px;
@@ -7,6 +10,14 @@ body{
     margin:0 auto;
     margin-top:10%;
 }
+img {
+	background:url(logo.jpg) no-repeat;
+	position:absolute;
+	top:10px;
+	right:10px;
+}
+
+
 /* Bordered form */
 form {
     width:100%;
@@ -21,6 +32,10 @@ form {
     margin: 0 auto;
     padding-bottom: 10px;
 }
+
+
+	
+
 
 /* Full-width inputs */
 input[type=text], input[type=password] {
@@ -47,3 +62,4 @@ input[type=submit]:hover {
     color: #4682B4	;
     border: 1px solid #4682B4	;
 }
+
